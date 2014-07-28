@@ -1,0 +1,26 @@
+language: ruby
+
+rvm:
+  - 1.8.7
+  - 1.9.3
+  - 2.0
+  - 2.1
+  - jruby
+
+matrix:
+  allow_failures:
+    - rvm: jruby
+env:
+  - REDMINE_VERSION=2.5.2 VERBOSE=yes
+  - REDMINE_VERSION=2.4.6 VERBOSE=yes
+
+script:
+  - export PLUGIN=redmine_contacts
+  - export WORKSPACE=$(pwd)/workspace
+  - export PATH_TO_PLUGIN=$(pwd)
+  - export PATH_TO_REDMINE=$WORKSPACE/redmine
+  - mkdir $WORKSPACE
+  - bash -x ./lib/redmine_plugins_travis-ci/.travis-init.sh -r || exit 1
+  - bash -x ./lib/redmine_plugins_travis-ci/.travis-init.sh -i || exit 1
+  - bash -x ./lib/redmine_plugins_travis-ci/.travis-init.sh -t || exit 1
+  - bash -x ./lib/redmine_plugins_travis-ci/.travis-init.sh -u || exit 1
