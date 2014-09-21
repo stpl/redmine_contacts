@@ -5,4 +5,4 @@
 <p class="address city"><%= f.text_field :city, :no_label => true, :placeholder => l(:label_crm_city) -%>
 <%= f.text_field :region, :no_label => true, :placeholder => l(:label_crm_region) -%>
 <%= f.text_field :postcode, :no_label => true, :placeholder => l(:label_crm_postcode), :size => 12 -%></p>
-<p class="address country"><%= f.select :country_code, l(:label_crm_countries).map{|k, v| [v, k.to_s]},  :no_label => true, :placeholder => l(:label_crm_country), :include_blank => true  -%></p>
+<p class="address country"><%= f.select :country_code, l(:label_crm_countries).map{|k, v| [v, k.to_s]}.sort,  :no_label => true, :placeholder => l(:label_crm_country), :include_blank => true  -%></p>

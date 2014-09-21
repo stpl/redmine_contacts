@@ -52,11 +52,9 @@ class Redmine::ApiTest::NotesTest < ActionController::IntegrationTest
                              :contacts_issues,
                              :deals,
                              :notes,
-                             :roles,
-                             :enabled_modules,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
   def setup
     Setting.rest_api_enabled = '1'

@@ -19,6 +19,7 @@
 
 class Contact < ActiveRecord::Base
   unloadable
+  include Redmine::SafeAttributes
 
   CONTACT_FORMATS = {
     :lastname_firstname_middlename => '#{last_name} #{first_name} #{middle_name}',
@@ -36,8 +37,6 @@ class Contact < ActiveRecord::Base
   has_many :notes, :as => :source, :class_name => 'ContactNote', :dependent => :delete_all, :order => "created_on DESC"
   belongs_to :assigned_to, :class_name => 'User', :foreign_key => 'assigned_to_id'
   has_and_belongs_to_many :issues, :order => "#{Issue.table_name}.due_date", :uniq => true
-  has_many :deals, :order => "#{Deal.table_name}.status_id", :uniq => true
-  has_and_belongs_to_many :related_deals, :class_name => 'Deal', :order => "#{Deal.table_name}.status_id", :uniq => true
   has_and_belongs_to_many :projects, :uniq => true
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
   has_one :avatar, :class_name => "Attachment", :as  => :container, :conditions => "#{Attachment.table_name}.description = 'avatar'", :dependent => :destroy
@@ -104,10 +103,29 @@ class Contact < ActiveRecord::Base
 
 
 
-  validates_presence_of :first_name
-  validates_presence_of :project, :message => "Contact should have project"
+  validates_presence_of :first_name, :project
 
   after_create :send_notification
+
+  safe_attributes 'is_company',
+    'first_name',
+    'last_name',
+    'middle_name',
+    'company',
+    'website',
+    'skype_name',
+    'birthday',
+    'job_title',
+    'background',
+    'author_id',
+    'assigned_to_id',
+    'phone',
+    'email',
+    'tag_list',
+    'visibility',
+    'watcher_user_ids',
+    'address_attributes'
+
 
   def self.visible_condition(user, options={})
     user.reload
@@ -142,18 +160,6 @@ class Contact < ActiveRecord::Base
 
   def self.deletable_condition(user, options={})
     self.visible_condition(user, options) + " AND (#{Project.allowed_to_condition(user, :delete_contacts)})"
-  end
-
-  # def self.allowed_to_condition(user, permission, options={})
-  #   Project.allowed_to_condition(user, permission)
-  # end
-
-  def all_deals
-    @all_deals ||= (self.deals + self.related_deals ).uniq.sort!{|x, y| x.status_id <=> y.status_id }
-  end
-
-  def all_visible_deals(usr=User.current)
-    @all_deals ||= (self.deals.visible(usr) + self.related_deals.visible(usr)).uniq.sort!{|x, y| x.status_id <=> y.status_id }
   end
 
   def self.available_tags(options = {})

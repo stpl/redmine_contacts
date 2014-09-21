@@ -17,17 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-class DealStatus < ActiveRecord::Base
-  unloadable
+class CreateDealsIssues < ActiveRecord::Migration
+  def change
+    create_table :deals_issues do |t|
+      t.integer :issue_id, :default => 0, :null => false
+      t.integer :deal_id, :default => 0, :null => false
+    end
+    add_index :deals_issues, [:issue_id, :deal_id]
+  end
 
-  OPEN_STATUS = 0
-  WON_STATUS = 1
-  LOST_STATUS = 2
-
-  before_destroy :check_integrity
-
-  has_and_belongs_to_many :projects
-  has_many :deals, :foreign_key => 'status_id', :dependent => :nullify
-  has_many :deal_processes_from, :class_name => 'DealProcess',:foreign_key => 'old_value', :dependent => :delete_all
-  has_many :deal_processes_to, :class_name => 'DealProcess', :foreign_key => 'value', :dependent => :delete_all
 end
+

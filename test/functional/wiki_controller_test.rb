@@ -29,6 +29,8 @@ class WikiControllerTest < ActionController::TestCase
            :member_roles,
            :issues,
            :issue_statuses,
+           :roles,
+           :enabled_modules,
            :versions,
            :trackers,
            :projects_trackers,
@@ -36,6 +38,7 @@ class WikiControllerTest < ActionController::TestCase
            :enabled_modules,
            :enumerations,
            :attachments,
+           :wikis,
            :workflows,
            :custom_fields,
            :custom_values,
@@ -52,14 +55,13 @@ class WikiControllerTest < ActionController::TestCase
                              :contacts_issues,
                              :deals,
                              :notes,
-                             :roles,
-                             :enabled_modules,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
 
   def setup
+    RedmineContacts::TestCase.prepare
     EnabledModule.create(:project_id => 1, :name => 'wiki')
     @project = Project.find(1)
     @wiki = @project.wiki

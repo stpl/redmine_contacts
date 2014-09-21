@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-CONTACTS_VERSION_NUMBER = '3.2.17'
+CONTACTS_VERSION_NUMBER = '3.4.0'
 CONTACTS_VERSION_TYPE = "Light version"
 
 Redmine::Plugin.register :redmine_contacts do
@@ -28,7 +28,7 @@ Redmine::Plugin.register :redmine_contacts do
   url 'http://redminecrm.com'
   author_url 'mailto:support@redminecrm.com'
 
-  requires_redmine :version_or_higher => '2.1.2'
+  requires_redmine :version_or_higher => '2.3'
 
   settings :default => {
     :name_format => :lastname_firstname.to_s,
@@ -59,7 +59,7 @@ Redmine::Plugin.register :redmine_contacts do
       :notes => [:create, :destroy, :edit, :update],
       :contacts_issues => [:new, :create_issue, :create, :delete, :close, :autocomplete_for_contact],
       :contacts_duplicates => [:index, :merge, :duplicates],
-      :contacts_projects => [:add, :delete],
+      :contacts_projects => [:new, :destroy, :create],
       :contacts_vcf => [:load]
     }
     permission :delete_contacts, :contacts => [:destroy, :bulk_destroy]

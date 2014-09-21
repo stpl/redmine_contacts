@@ -46,8 +46,6 @@ class ContactsDuplicatesController < ApplicationController
 
   def merge
     @duplicate.notes << @contact.notes
-    @duplicate.deals << @contact.deals
-    @duplicate.related_deals << @contact.related_deals
     @duplicate.issues << @contact.issues
     @duplicate.projects << @contact.projects
     @duplicate.email = (@duplicate.emails | @contact.emails).join(', ')

@@ -15,20 +15,11 @@ rm -r plugins/redmine_contacts
 
 == Requirements
 
-* Redmine 2.1.2+
+* Redmine 2.3+
 
 == Test
-rake db:drop  RAILS_ENV=test_sqlite3
-rake db:migrate db:migrate_plugins RAILS_ENV=test_sqlite3
-rake test:plugins:integration PLUGIN=redmine_contacts RAILS_ENV=test_sqlite3
-rake test:plugins:functionals PLUGIN=redmine_contacts RAILS_ENV=test_sqlite3
-rake test:plugins PLUGIN=redmine_contacts RAILS_ENV=test_sqlite3
-
-rake db:reset  db:migrate_plugins test:plugins NAME=redmine_contacts RAILS_ENV=test
-
-rake test:engines:all PLUGIN=redmine_contacts
-
-rake db:drop RAILS_ENV=test && rake db:migrate db:migrate_plugins RAILS_ENV=test && rake test:plugins PLUGIN=redmine_contacts RAILS_ENV=test
+bundle exec rake db:drop db:create db:migrate redmine:plugins RAILS_ENV=test_sqlite3
+bundle exec rake test TEST="plugins/redmine_contacts/test/**/*_test.rb" RAILS_ENV=test_sqlite3
 
 === Test API
 

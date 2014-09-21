@@ -19,11 +19,17 @@
 
 class ContactsTagsController < ApplicationController
   unloadable
-  before_filter :require_admin
+  before_filter :require_admin, :except => [:index]
   before_filter :find_tag, :only => [:edit, :update]
   before_filter :bulk_find_tags, :only => [:context_menu, :merge, :destroy]
 
+  accept_api_auth :index
+
   def index
+    @tags = Contact.all_tag_counts(:order => :name)
+    respond_to do |format|
+      format.api
+    end
   end
 
   def edit
@@ -33,6 +39,7 @@ class ContactsTagsController < ApplicationController
     @tags.each do |tag|
       begin
         tag.reload.destroy
+        Contact.where("#{Contact.table_name}.cached_tag_list LIKE ?", '%' + tag.name + '%').includes(:tags).each{|c| c.tag_list = c.all_tags_list; c.save}
       rescue ::ActiveRecord::RecordNotFound # raised by #reload if tag no longer exists
         # nothing to do, tag was already deleted (eg. by a parent)
       end
@@ -41,13 +48,13 @@ class ContactsTagsController < ApplicationController
   end
 
   def update
+    old_name = @tag.name
     @tag.name = params[:tag][:name]
     if @tag.save
-
+      Contact.where("#{Contact.table_name}.cached_tag_list LIKE ?", '%' + old_name + '%').includes(:tags).each{|c| c.tag_list = c.all_tags_list; c.save}
       flash[:notice] = l(:notice_successful_update)
       respond_to do |format|
         format.html { redirect_to :controller => 'settings', :action => 'plugin', :id => 'redmine_contacts', :tab => "tags" }
-        format.xml  { }
       end
     else
       respond_to do |format|
@@ -67,7 +74,10 @@ class ContactsTagsController < ApplicationController
       ActsAsTaggableOn::Tagging.transaction do
         tag = ActsAsTaggableOn::Tag.find_by_name(params[:tag][:name]) || ActsAsTaggableOn::Tag.create(params[:tag])
         ActsAsTaggableOn::Tagging.where(:tag_id => @tags.map(&:id)).update_all(:tag_id => tag.id)
-        @tags.select{|t| t.id != tag.id}.each{|t| t.destroy }
+        @tags.select{|t| t.id != tag.id}.each do |t|
+          t.destroy
+          Contact.where("#{Contact.table_name}.cached_tag_list LIKE ?", '%' + t.name + '%').includes(:tags).each{|c| c.tag_list = c.all_tags_list; c.save}
+        end
         redirect_to :controller => 'settings', :action => 'plugin', :id => 'redmine_contacts', :tab => "tags"
       end
     end

@@ -34,12 +34,6 @@ module RedmineContacts
   end
 end
 
-if Redmine::VERSION.to_s > "2.3.0"
-  unless IssueQuery.included_modules.include?(RedmineContacts::Patches::IssueQueryPatch)
-    IssueQuery.send(:include, RedmineContacts::Patches::IssueQueryPatch)
-  end
-else
-  unless Query.included_modules.include?(RedmineContacts::Patches::IssueQueryPatch)
-    Query.send(:include, RedmineContacts::Patches::IssueQueryPatch)
-  end
+unless IssueQuery.included_modules.include?(RedmineContacts::Patches::IssueQueryPatch)
+  IssueQuery.send(:include, RedmineContacts::Patches::IssueQueryPatch)
 end

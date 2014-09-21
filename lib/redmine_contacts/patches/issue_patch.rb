@@ -25,12 +25,24 @@ module RedmineContacts
 
     module IssuePatch
       def self.included(base) # :nodoc:
+        base.send(:include, InstanceMethods)
         base.class_eval do
           unloadable # Send unloadable so it will not be unloaded in development
           has_and_belongs_to_many :contacts, :uniq => true
         end
       end
+
+      module InstanceMethods
+        def reject_deal(attributes)
+          exists = attributes['id'].present?
+          empty = attributes[:deal_id].blank?
+          attributes.merge!({:_destroy => 1}) if exists and empty
+          return (!exists and empty)
+        end
+      end
+
     end
+
 
   end
 end

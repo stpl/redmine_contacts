@@ -53,11 +53,9 @@ class MailerPatchTest < ActiveSupport::TestCase
                              :deal_processes,
                              :deals,
                              :notes,
-                             :roles,
-                             :enabled_modules,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures/contacts_mailer'

@@ -1,4 +1,4 @@
-<div id="issues" class="contact-issues">
+<div id="contact_issues" class="contact-issues">
 
 <div class="contextual">
 	<%= link_to l(:label_issue_new), {}, :onclick => "$('#add_issue').show(); $('#add_issue_link').hide(); return false;", :id => 'add_issue_link' if User.current.allowed_to?(:add_issues, @project) %>
@@ -14,6 +14,7 @@
 
 <%= error_messages_for 'issue' %>
 
+<% if User.current.allowed_to?(:add_issues, @project) %>
 <div id="add_issue" style="display:none;">
    <%= form_tag({ :controller => "contacts_issues", :action => "create_issue", :project_id => @project, :id => contact}, :multipart => true, :id => "add_issue_form") do %>
 
@@ -23,6 +24,7 @@
 
 	<% end %>
 </div>
+<% end %>
 
 <% if issues.any? %>
 	<table style="width:100%">

@@ -32,6 +32,7 @@ class NotesController < ApplicationController
   helper :custom_fields
 
   def show
+    (render_403; return false) unless @note.visible?
     respond_to do |format|
       format.html
       format.api

@@ -17,6 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
+require 'redmine_contacts/helpers/money_helper'
+require 'redmine_contacts/helpers/contacts_helper'
+
+# Plugins
+require 'acts_as_viewable/init'
+require 'acts_as_priceable/init'
+require 'acts_as_taggable_on_patch'
+
 require_dependency 'redmine_contacts/utils/thumbnail'
 require_dependency 'redmine_contacts/utils/check_mail'
 require_dependency 'redmine_contacts/utils/date_utils'
@@ -30,10 +38,12 @@ ActionDispatch::Reloader.to_prepare do
 	require_dependency 'redmine_contacts/patches/project_patch'
   require_dependency 'redmine_contacts/patches/mailer_patch'
 	require_dependency 'redmine_contacts/patches/notifiable_patch'
-	require_dependency 'redmine_contacts/patches/application_controller_patch'
-	require_dependency 'redmine_contacts/patches/attachments_controller_patch'
-	require_dependency 'redmine_contacts/patches/auto_completes_controller_patch'
+  require_dependency 'redmine_contacts/patches/application_controller_patch'
+  require_dependency 'redmine_contacts/patches/attachments_controller_patch'
+  require_dependency 'redmine_contacts/patches/auto_completes_controller_patch'
   require_dependency 'redmine_contacts/patches/issue_query_patch'
+  require_dependency 'redmine_contacts/patches/queries_helper_patch'
+  require_dependency 'redmine_contacts/patches/timelog_helper_patch'
   require_dependency 'redmine_contacts/patches/projects_helper_patch'
 end
 
@@ -43,14 +53,6 @@ require_dependency 'redmine_contacts/wiki_macros/contacts_wiki_macros'
 require_dependency 'redmine_contacts/hooks/views_projects_hook'
 require_dependency 'redmine_contacts/hooks/views_issues_hook'
 require_dependency 'redmine_contacts/hooks/views_layouts_hook'
-
-# Plugins
-require 'acts_as_viewable/init'
-require 'acts_as_priceable/init'
-require 'acts_as_taggable_on_patch'
-
-require 'redmine_contacts/helpers/money_helper'
-require 'redmine_contacts/helpers/contacts_helper'
 
 require 'redmine_contacts/liquid/liquid' if Object.const_defined?("Liquid") rescue false
 

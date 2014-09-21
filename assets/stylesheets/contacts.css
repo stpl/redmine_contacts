@@ -11,6 +11,11 @@ span.contact {display: inline-block;}
 /* CONTACT ISSUES		*/
 /********************/
 
+#contact_issues img.gravatar {
+  vertical-align: middle;
+  margin-left: 5px;
+}
+
 div.contact-issues {
 	margin-right: 4px;
 }
@@ -184,7 +189,9 @@ span.tag-label, span.tag-input {
 #responsible_user select {width: 95%; display: block;}
 #responsible_user a.delete {opacity: 0.4;}
 #responsible_user a.delete:hover {opacity: 1;}
-#responsible_user img.gravatar {vertical-align: middle;margin: 0 4px 2px 0;}
+#responsible_user img.gravatar {
+  vertical-align: middle;margin: 0 4px 2px 0;
+}
 
 #edit_tags_form .contacts-tags-edit  ul.tagit {
   padding: 5px;
@@ -271,22 +278,27 @@ table.index tbody tr.group td {
 	border-bottom: 1px solid #CCC;
 }
 
-table.list tr.contact a {
+table.list.contacts tr td a {
 	color: #666;
 }
 
 table.list.contacts td.name,
-table.list.contacts td.phone,
-table.list.contacts td.email
- {
+table.list td.emails,
+table.list td.phones {
 	white-space: nowrap;
+}
+
+table.list td.address,
+table.list td.background {
+  text-align: left;
 }
 
 
 /**************************************************************/
 /*                   TABLE LIST                               */
 /**************************************************************/
-table.list td.contacts {text-align: left; white-space: normal;}
+table.list td.contacts,
+table.list td.deal {text-align: left; white-space: normal;}
 table.list td.contact {text-align: left}
 
 /**************************************************************/

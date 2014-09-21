@@ -47,13 +47,13 @@ class ContactsController < ApplicationController
   helper :sort
   include SortHelper
   helper :queries
-  helper :contacts_queries
-  include ContactsQueriesHelper
+  helper :crm_queries
+  include CrmQueriesHelper
   include ApplicationHelper
   include NotesHelper
 
   def index
-    retrieve_contacts_query
+    retrieve_crm_query('contact')
     sort_init(@query.sort_criteria.empty? ? [['last_name', 'asc'], ['first_name', 'asc']] : @query.sort_criteria)
     sort_update(@query.sortable_columns)
 
@@ -72,11 +72,10 @@ class ContactsController < ApplicationController
       @contacts_pages = Paginator.new(self, @contacts_count, @limit, params['page'])
       @offset ||= @contacts_pages.current.offset
       @contact_count_by_group = @query.contact_count_by_group
-      @contacts = @query.contacts(:include => [:projects, :avatar],
-                              :search => params[:search],
-                              :order => sort_clause,
-                              :offset => @offset,
-                              :limit => @limit)
+      @contacts = @query.results_scope(:search => params[:search]).all(:include => [:avatar],
+                                       :order => sort_clause,
+                                       :offset => @offset,
+                                       :limit => @limit)
       @filter_tags = @query.filters["tags"] && @query.filters["tags"][:values]
 
       respond_to do |format|
@@ -119,7 +118,8 @@ class ContactsController < ApplicationController
   end
 
   def update
-    if @contact.update_attributes(params[:contact])
+    @contact.safe_attributes = params[:contact]
+    if @contact.save
       flash[:notice] = l(:notice_successful_update)
       attach_avatar
       respond_to do |format|
@@ -149,14 +149,12 @@ class ContactsController < ApplicationController
   def new
     @duplicates = []
     @contact = Contact.new
-    @contact.attributes = params[:contact] if params[:contact] && params[:contact].is_a?(Hash)
+    @contact.safe_attributes = params[:contact] if params[:contact] && params[:contact].is_a?(Hash)
   end
 
   def create
-    params[:contact].delete(:project_id)
-    @contact = Contact.new(params[:contact])
-    @contact.projects << @project
-    @contact.author = User.current
+    @contact = Contact.new(:project => @project, :author => User.current)
+    @contact.safe_attributes = params[:contact]
     if @contact.save
       flash[:notice] = l(:notice_successful_create)
       attach_avatar
@@ -212,7 +210,6 @@ class ContactsController < ApplicationController
     @contacts = Contact.visible.where(:id => params[:selected_contacts])
     @contact = @contacts.first if (@contacts.size == 1)
     @can = {:edit => (@contact && @contact.editable?) || (@contacts && @contacts.collect{|c| c.editable?}.inject{|memo,d| memo && d}),
-            :create_deal => (@project && User.current.allowed_to?(:add_deals, @project)),
             :create => (@project && User.current.allowed_to?(:add_contacts, @project)),
             :delete => @contacts.collect{|c| c.deletable?}.inject{|memo,d| memo && d},
             :send_mails => @contacts.collect{|c| c.send_mail_allowed? && !c.primary_email.blank?}.inject{|memo,d| memo && d}

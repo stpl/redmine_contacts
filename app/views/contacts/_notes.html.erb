@@ -1,9 +1,5 @@
 <%
-  if Redmine::VERSION.to_s > '2.3'
-    extend Redmine::Pagination
-  else
-    extend ActionController::Pagination
-  end
+  extend Redmine::Pagination
   source_id_cond = @contact.is_company ? Contact.visible.order_by_name.select(:id).find_all_by_company(@contact.first_name) << @contact.id : @contact.id
   @note = Note.new(:created_on => Time.now)
   @notes_pages, @notes = paginate :notes,

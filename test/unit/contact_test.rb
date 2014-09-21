@@ -52,12 +52,13 @@ class ContactTest < ActiveSupport::TestCase
                              :contacts_issues,
                              :deals,
                              :notes,
-                             :roles,
-                             :enabled_modules,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
+  def setup
+    RedmineContacts::TestCase.prepare
+  end
 
   # Replace this with your real tests.
   def test_find_by_emails_first_email

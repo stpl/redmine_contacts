@@ -1,7 +1,12 @@
-contacts_queries_002:
+contact_queries_002:
   id: 2
   project_id: 1
+  <% if Redmine::VERSION.to_s < '2.4' %>
   is_public: false
+  <% else %>
+  visibility: 2
+  <% end %>
+  type: ContactQuery
   name: Private contacts query for cookbook
   filters: |
     ---
@@ -15,10 +20,15 @@ contacts_queries_002:
       :operator: "="
 
   user_id: 3
-contacts_queries_003:
+contact_queries_003:
   id: 3
   project_id:
+  <% if Redmine::VERSION.to_s < '2.4' %>
   is_public: false
+  <% else %>
+  visibility: 2
+  <% end %>
+  type: ContactQuery
   name: Private query for all projects
   filters: |
     ---
@@ -28,10 +38,15 @@ contacts_queries_003:
       :operator: "="
 
   user_id: 3
-contacts_queries_004:
+contact_queries_004:
   id: 4
   project_id:
+  <% if Redmine::VERSION.to_s < '2.4' %>
   is_public: true
+  <% else %>
+  visibility: 0
+  <% end %>
+  type: ContactQuery
   name: Public query for all projects
   filters: |
     ---
@@ -41,11 +56,16 @@ contacts_queries_004:
       :operator: "="
 
   user_id: 2
-contacts_queries_005:
+contact_queries_005:
   id: 5
   project_id:
+  <% if Redmine::VERSION.to_s < '2.4' %>
   is_public: true
-  name: Open issues by tags
+  <% else %>
+  visibility: 0
+  <% end %>
+  type: ContactQuery
+  name: Open contacts by tags
   filters: |
     ---
     tags:

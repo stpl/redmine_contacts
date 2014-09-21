@@ -53,11 +53,9 @@ class ContactsControllerTest < ActionController::TestCase
                              :contacts_issues,
                              :deals,
                              :notes,
-                             :roles,
-                             :enabled_modules,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
 
   def setup
