@@ -1,3 +1,0 @@
-[submodule "lib/redmine_plugins_travis-ci"]
-	path = lib/redmine_plugins_travis-ci
-	url = https://github.com/RCRM/redmine_plugins_travis-ci

@@ -10,9 +10,14 @@ rvm:
 matrix:
   allow_failures:
     - rvm: jruby
+
 env:
   - REDMINE_VERSION=2.5.2 VERBOSE=yes
   - REDMINE_VERSION=2.4.6 VERBOSE=yes
+
+before_install:
+  - git submodule add https://github.com/RCRM/redmine_plugins_travis-ci travis
+  - cp ./travis/.travis-*ß
 
 script:
   - export PLUGIN=redmine_contacts
@@ -20,7 +25,7 @@ script:
   - export PATH_TO_PLUGIN=$(pwd)
   - export PATH_TO_REDMINE=$WORKSPACE/redmine
   - mkdir $WORKSPACE
-  - bash -x ./lib/redmine_plugins_travis-ci/.travis-init.sh -r || exit 1
-  - bash -x ./lib/redmine_plugins_travis-ci/.travis-init.sh -i || exit 1
-  - bash -x ./lib/redmine_plugins_travis-ci/.travis-init.sh -t || exit 1
-  - bash -x ./lib/redmine_plugins_travis-ci/.travis-init.sh -u || exit 1
+  - bash -x ./lib/travis/.travis-init.sh -r || exit 1
+  - bash -x ./lib/travis/.travis-init.sh -i || exit 1
+  - bash -x ./lib/travis/.travis-init.sh -t || exit 1
+  - bash -x ./lib/travis/.travis-init.sh -u || exit 1
