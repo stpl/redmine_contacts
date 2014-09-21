@@ -17,7 +17,7 @@ env:
 
 before_install:
   - git submodule add https://github.com/RCRM/redmine_plugins_travis-ci travis
-  - cp ./travis/.travis-*ß
+  - cp ./travis/.travis-*
 
 script:
   - export PLUGIN=redmine_contacts
