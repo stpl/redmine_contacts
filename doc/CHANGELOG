@@ -4,6 +4,28 @@ Redmine CRM plugin - customer relationship management plugin for redmine
 Copyright (C) 2011-2014 Kirill Bezrukov
 http://www.redminecrm.com/
 
+== 2014-09-21 v3.4.0
+
+* Deal issues
+* Spent time reports for deal and deal's contact
+* Added currency and background filters for deals
+* Added currency field for deals table
+* Added formating for probability field
+* Permissions check for issue list contact columns and filters
+* Fixed bug with cached tags on tags merge, edit and delete
+* REST API for contact projects create/destroy
+* REST API for contact tag list
+
+== 2014-09-15 v3.3.0
+
+* Deal queries
+* REST API for deal statuses, contacts queries and deal categories
+* CSV export custsom field columns order fixes (Sascha Hübner)
+* CSV deals export empty price fixes
+* Added deal name field to REST API
+* Fixed bug with user creation from contact page
+* Mark Deals menu item as selected on import
+
 == 2014-05-16 v3.2.17
 
 * Deal macro deleted from light version

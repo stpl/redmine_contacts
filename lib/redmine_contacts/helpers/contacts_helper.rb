@@ -62,7 +62,7 @@ module RedmineContacts
       scope = scope.scoped.limit(options[:limit] || 500)
       scope = scope.scoped.companies if options.delete(:is_company)
       scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
-      scope = project ? scope.by_project(project) : scope.where("#{Project.table_name}.id <> -1")
+      scope = scope.by_project(project) if project
       scope.sort!{|x, y| x.name <=> y.name }.collect {|m| [m.name, m.id.to_s]}
     end
 
@@ -91,7 +91,7 @@ module RedmineContacts
     end
 
     def select_contact_tag(name, contact, options={})
-      cross_project_contacts = !!options.delete(:cross_project_contacts)
+      cross_project_contacts = RedmineContacts.cross_project_contacts? || !!options.delete(:cross_project_contacts)
       field_id = sanitize_to_id(name)
       is_select = !!options[:is_select]
       display_field = !!options[:display_field]
@@ -150,7 +150,7 @@ module RedmineContacts
 
       obj_icon = obj.is_a?(Contact) ? (obj.is_company ? "company.png" : "person.png") : (obj.is_a?(Deal) ? "deal.png" : "unknown.png")
 
-      # return image_tag(obj_icon, options.merge({:plugin => "redmine_contacts"})) if Rails::env == "development"
+      return image_tag(obj_icon, options.merge({:plugin => "redmine_contacts"})) if ENV["NO_AVATAR"]
 
       if obj.is_a?(Deal)
         if obj.contact

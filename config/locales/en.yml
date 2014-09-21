@@ -542,7 +542,6 @@ en:
     VI: U.S. Virgin Islands
     UG: Uganda
     UA: Ukraine
-    SU: Union of Soviet Socialist Republics
     AE: United Arab Emirates
     GB: United Kingdom
     US: United States
@@ -589,3 +588,6 @@ en:
 
   #3.2.15
   permission_export_contacts: Export contacts and deals
+
+  #3.4.0
+  label_crm_deal_contact: Deal's contact

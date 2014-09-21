@@ -54,7 +54,7 @@ class NotesControllerTest < ActionController::TestCase
                              :notes,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
   def setup
     RedmineContacts::TestCase.prepare

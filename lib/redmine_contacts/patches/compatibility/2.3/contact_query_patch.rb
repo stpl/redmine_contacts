@@ -17,38 +17,37 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-require_dependency 'queries_helper'
-
 module RedmineContacts
   module Patches
-    module QueriesHelperPatch
-      def self.included(base)
-        base.send(:include, InstanceMethods)
 
+    module ContactQueryPatch
+      def self.included(base) # :nodoc:
+        base.send(:include, InstanceMethods)
         base.class_eval do
           unloadable
-          alias_method_chain :column_value, :contacts
+
+          scope :visible, lambda {|*args|
+            user = args.shift || User.current
+            base = Project.allowed_to_condition(user, :view_contacts, *args)
+            user_id = user.logged? ? user.id : 0
+
+            includes(:project).where("(#{table_name}.project_id IS NULL OR (#{base})) AND (#{table_name}.is_public = ? OR #{table_name}.user_id = ?)", true, user_id)
+          }
+
         end
       end
+    end
 
-
-      module InstanceMethods
-        def column_value_with_contacts(column, list_object, value)
-          if column.name == :name && list_object.is_a?(Contact)
-            contact_tag(list_object)
-          elsif value.is_a?(Contact)
-            contact_tag(value)
-          else
-            column_value_without_contacts(column, list_object, value)
-          end
-        end
-
+    module InstanceMethods
+      def visible?(user=User.current)
+        (project.nil? || user.allowed_to?(:view_contacts, project)) && (self.is_public? || self.user_id == user.id)
       end
 
     end
+
   end
 end
 
-unless QueriesHelper.included_modules.include?(RedmineContacts::Patches::QueriesHelperPatch)
-  QueriesHelper.send(:include, RedmineContacts::Patches::QueriesHelperPatch)
+unless ContactQuery.included_modules.include?(RedmineContacts::Patches::ContactQueryPatch)
+  ContactQuery.send(:include, RedmineContacts::Patches::ContactQueryPatch)
 end

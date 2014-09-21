@@ -20,20 +20,16 @@
 class ContactsProjectsController < ApplicationController
   unloadable
 
-  before_filter :find_project_by_project_id, :authorize
-  before_filter :find_contact
-  before_filter :check_count, :find_related_project, :only => :delete
+  before_filter :find_optional_project, :find_contact
+  before_filter :find_related_project, :only => [:destroy, :create]
+  before_filter :check_count, :only => :destroy
+
+  accept_api_auth :create, :destroy
 
   helper :contacts
 
-  def add
+  def new
     @show_form = "true"
-    # find_contact
-    if params[:related_project_id] then
-      find_related_project
-      @contact.projects << @related_project
-      @contact.save if request.post?
-    end
     respond_to do |format|
       format.html { redirect_to :back }
       format.js
@@ -42,18 +38,36 @@ class ContactsProjectsController < ApplicationController
     render :text => 'Project added.', :layout => true
   end
 
-  def delete
-    @contact.projects.delete(@related_project) if request.delete?
+  def create
+    @contact.projects << @related_project
+    if @contact.save
+      respond_to do |format|
+        format.html { redirect_to :back }
+        format.js { render :action => "new" }
+        format.api  { render_api_ok }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to :back }
+        format.js { render :action => "new" }
+        format.api { render_validation_errors(@contact) }
+      end
+    end
+  end
+
+  def destroy
+    @contact.projects.delete(@related_project)
     respond_to do |format|
       format.html { redirect_to :back }
-      format.js {render :action => "add"}
+      format.js {render :action => "new"}
+      format.api  { render_api_ok }
     end
   end
 
   private
 
   def find_related_project
-    @related_project = Project.find(params[:related_project_id])
+    @related_project = Project.find((params[:project] && params[:project][:id]) || params[:id])
     raise Unauthorized unless User.current.allowed_to?(:edit_contacts, @related_project)
   rescue ActiveRecord::RecordNotFound
     render_404
@@ -65,6 +79,7 @@ class ContactsProjectsController < ApplicationController
 
   def find_contact
     @contact = Contact.find(params[:contact_id])
+    raise Unauthorized unless @contact.editable?
   rescue ActiveRecord::RecordNotFound
     render_404
   end

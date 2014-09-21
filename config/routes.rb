@@ -28,6 +28,7 @@
       get 'tabs/:tab' => 'contacts#show', :as => "tabs"
       get 'load_tab' => 'contacts#load_tab', :as => "load_tab"
     end
+    resources :contacts_projects, :path => "projects", :only => [:new, :create, :destroy]
   end
 
   resources :projects do
@@ -39,43 +40,16 @@
 
   end
 
-  resources :deals do
-    collection do
-      get :bulk_edit, :context_menu, :edit_mails, :preview_email
-      post :bulk_edit, :bulk_update, :send_mails, :update_form
-      put :update_form
-      delete :bulk_destroy
-    end
-  end
-
-  resources :projects do
-    resources :deals, :only => [:new, :create, :index]
-  end
-
-  resources :projects do
-    resources :contacts_queries, :only => [:new, :create]
-  end
-
-  resources :contacts_queries, :except => [:show]
-
-  resources :deal_statuses, :except => :show do
-    collection do
-      put :assing_to_project
-    end
-  end
-
   resources :notes
 
   match '/contacts_tags', :controller => 'contacts_tags', :action => 'destroy', :via => :delete
 
-  resources :contacts_tags, :only => [:edit, :update] do
+  resources :contacts_tags do
     collection do
       post :merge, :context_menu
       get :context_menu, :merge
     end
   end
-
-
 
   match 'projects/:project_id/contacts/:contact_id/new_task' => 'contacts_issues#new', :via => :post
 
@@ -95,7 +69,6 @@
   match 'users/new_from_contact/:id' => 'users#new_from_contact', :via => :get
   match 'contacts_duplicates/:action' => 'contacts_duplicates'
   match 'contacts_duplicates/search' => 'contacts_duplicates#search', :via => :get, :as => 'contacts_duplicates_search'
-  match 'contacts_projects/:action' => 'contacts_projects'
   match 'contacts_issues/:action' => 'contacts_issues'
   match 'contacts_vcf/:action' => 'contacts_vcf'
   match 'deal_categories/:action' => 'deal_categories'

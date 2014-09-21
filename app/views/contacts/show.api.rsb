@@ -73,23 +73,6 @@ api.contact do
     end
   end if include_in_api_response?('contacts') && @contact.company_contacts.present?
 
-  api.array :deals do
-    (@contact.related_deals + @contact.deals).each do |deal|
-      api.deal do
-        api.id deal.id
-        api.price deal.price
-        api.currency deal.currency
-        api.price_type deal.price_type
-        api.name deal.name
-        api.project(:id => deal.project.id,  :name => deal.project.name)
-        api.status(:id => deal.status.id, :name => deal.status.name)
-        api.background deal.background
-        api.created_on deal.created_on
-        api.updated_on deal.updated_on
-      end
-    end
-  end if include_in_api_response?('deals') && (@contact.related_deals + @contact.deals).present? && User.current.allowed_to?(:view_deals, @project)
-
   if authorize_for(:issues, :show)
     api.array :issues do
       @contact.issues.each do |issue|

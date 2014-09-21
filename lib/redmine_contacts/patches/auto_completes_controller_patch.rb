@@ -30,6 +30,7 @@ module RedmineContacts
       end
 
       module InstanceMethods
+
         def contact_tags
           @name = params[:q].to_s
           @tags = Contact.available_tags :name_like => @name, :limit => 10

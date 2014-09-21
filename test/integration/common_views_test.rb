@@ -51,14 +51,13 @@ class CommonViewsTest < ActionController::IntegrationTest
                             [:contacts,
                              :contacts_projects,
                              :contacts_issues,
+                             :deals_issues,
                              :deals,
                              :deal_statuses,
                              :notes,
-                             :roles,
-                             :enabled_modules,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
   def setup
     RedmineContacts::TestCase.prepare

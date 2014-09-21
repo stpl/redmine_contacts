@@ -17,6 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-if Redmine::VERSION.to_s < '2.3'
-  Dir[File.dirname(__FILE__) + '/compatibility/2.1/*.rb'].each { |f| require f }
+if Redmine::VERSION.to_s < '2.4'
+  Dir[File.dirname(__FILE__) + '/compatibility/2.3/*.rb'].each { |f| require f }
 end

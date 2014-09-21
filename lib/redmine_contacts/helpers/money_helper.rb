@@ -29,7 +29,7 @@ module RedmineContacts
     end
 
     def prices_collection_by_currency(prices_collection, options={})
-      return [] if prices_collection.blank?
+      return [] if prices_collection.blank? || prices_collection == 0
       prices_collection.collect{|c| content_tag(:span, price_to_currency(c[1], c[0], :symbol => true), :style => "white-space: nowrap;") unless c[1] == 0 && options[:hide_zeros]}.compact
     end
 

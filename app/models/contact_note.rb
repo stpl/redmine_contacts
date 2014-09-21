@@ -31,4 +31,6 @@ class ContactNote < Note
                           :conditions => Contact.visible_condition(args.shift || User.current, *args) +
                                          " AND (#{ContactNote.table_name}.source_type = 'Contact')"}}
 
+  acts_as_attachable :view_permission => :view_contacts,
+                     :delete_permission => :edit_contacts
 end

@@ -39,6 +39,7 @@
     </h2>
 
     <%= hidden_field_tag 'set_filter', '1' %>
+    <%= hidden_field_tag 'object_type', 'contact' %>
 
 <% end %>
 
@@ -49,6 +50,7 @@
         <p class="nodata"><%= l(:label_no_data) %></p>
     <% else %>
       <%= render :partial => contacts_list_style %>
+      <p class="pagination"><%= pagination_links_full @contacts_pages, @contacts_count %></p>
     <% end %>
     </div>
     <% other_formats_links do |f| %>
@@ -56,8 +58,6 @@
     <% end if User.current.allowed_to?(:export_contacts, @project, :global => true) %>
 <% end %>
 
-
-<% html_title l(:label_contact_plural) %>
 
 <% content_for :sidebar do %>
     <%= render :partial => 'common/sidebar' %>

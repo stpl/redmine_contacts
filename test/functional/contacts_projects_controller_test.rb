@@ -44,7 +44,7 @@ class ContactsProjectsControllerTest < ActionController::TestCase
                              :notes,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
   def setup
     RedmineContacts::TestCase.prepare
@@ -54,11 +54,11 @@ class ContactsProjectsControllerTest < ActionController::TestCase
     User.current = nil
   end
 
-  test "should delete project" do
+  def test_delete_destroy
     @request.session[:user_id] = 1
     contact = Contact.find(1)
     assert_equal 2, contact.projects.size
-    xhr :delete, :delete, :project_id => 1, :related_project_id => 2, :contact_id => 1
+    xhr :delete, :destroy, :project_id => 1, :id => 2, :contact_id => 1
     assert_response :success
     assert_include 'contact_projects', response.body
 
@@ -66,34 +66,34 @@ class ContactsProjectsControllerTest < ActionController::TestCase
     assert_equal [1], contact.project_ids
   end
 
-  test "should not delete last project" do
+  def test_delete_destroy_last_project
     @request.session[:user_id] = 1
     contact = Contact.find(1)
     assert RedmineContacts::TestCase.is_arrays_equal(contact.project_ids, [1, 2])
     # assert_equal '12', "#{contact.project_ids} || #{contact.projects.map(&:name).join(', ')} #{Project.find(1).contacts.map(&:name).join(', ')},  #{Project.find(2).name}"
-    xhr :delete, :delete, :project_id => 1, :related_project_id => 2, :contact_id => 1
+    xhr :delete, :destroy, :project_id => 1, :id => 2, :contact_id => 1
     assert_response :success
-    xhr :delete, :delete, :project_id => 1, :related_project_id => 1, :contact_id => 1
+    xhr :delete, :destroy, :project_id => 1, :id => 1, :contact_id => 1
     assert_response 403
 
     contact.reload
     assert_equal [1], contact.project_ids
   end
 
-  test "should add project" do
+  def test_post_new
     @request.session[:user_id] = 1
 
-    xhr :post, :add, :project_id => "ecookbook", :related_project_id => 2, :contact_id => 2
+    xhr :post, :new, :project_id => "ecookbook", :id => 2, :contact_id => 2
     assert_response :success
     assert_include 'contact_projects', response.body
     contact = Contact.find(2)
     assert RedmineContacts::TestCase.is_arrays_equal(contact.project_ids, [1, 2])
   end
 
-  test "should not add project without contacts module" do
+  def test_post_create_without_permissions
     @request.session[:user_id] = 1
 
-    xhr :post, :add, :project_id => "project6", :related_project_id => 2, :contact_id => 2
+    xhr :post, :create, :project_id => "project6", :id => 2, :contact_id => 2
     assert_response 403
   end
 

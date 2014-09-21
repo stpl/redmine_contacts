@@ -23,7 +23,7 @@ module ContactsHelper
 
   def contact_tabs(contact)
     contact_tabs = []
-    contact_tabs << {:name => 'notes', :partial => 'contacts/notes', :label => l(:label_crm_note_plural)} if User.current.allowed_to?(:view_contacts, @project)
+    contact_tabs << {:name => 'notes', :partial => 'contacts/notes', :label => l(:label_crm_note_plural)} if contact.visible?
     contact_tabs << {:name => 'contacts', :partial => 'company_contacts', :label => l(:label_contact_plural) + (contact.company_contacts.visible.count > 0 ? " (#{contact.company_contacts.count})" : "")} if contact.is_company?
     contact_tabs
   end
@@ -43,16 +43,10 @@ module ContactsHelper
     project_tree(projects) do |project, level|
       s << "<ul>"
       name_prefix = (level > 0 ? ('&nbsp;' * 2 * level + '&#187; ') : '')
-        url = {:controller => 'contacts_projects',
-               :action => 'delete',
-               :related_project_id => project.id,
-               :project_id => @project.id,
-               :contact_id => @contact.id}
-
       s << "<li id='project_#{project.id}'>" + name_prefix + link_to_project(project)
 
       s += ' ' + link_to(image_tag('delete.png'),
-                                 url,
+                                 contact_contacts_project_path(@contact, :id => project.id, :project_id => @project.id),
                                  :remote => true,
                                  :method => :delete,
                                  :style => "vertical-align: middle",

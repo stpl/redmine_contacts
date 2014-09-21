@@ -93,6 +93,7 @@ class RedmineContacts::TestCase
 
     Project.find(1, 2, 3, 4, 5).each do |project|
       EnabledModule.create(:project => project, :name => 'contacts')
+      EnabledModule.create(:project => project, :name => 'deals')
     end
   end
 

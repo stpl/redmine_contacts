@@ -28,8 +28,7 @@ class Note < ActiveRecord::Base
   validates_presence_of :source, :author, :content
 
   acts_as_customizable
-  acts_as_attachable :view_permission => :view_contacts,
-                     :delete_permission => :edit_contacts
+  acts_as_attachable
 
   acts_as_event :title => Proc.new {|o| "#{l(:label_crm_note_for)}: #{o.source.name}"},
                 :type => "issue-note",
@@ -56,6 +55,10 @@ class Note < ActiveRecord::Base
     if !self.created_on.blank? && val.to_s.gsub(/\s/, "").match(/^(\d{1,2}):(\d{1,2})$/)
       self.created_on = self.created_on.change({:hour => $1.to_i % 24, :min => $2.to_i % 60})
     end
+  end
+
+  def visible?(usr=nil)
+    self.source.visible?(usr)
   end
 
   def self.available_authors(prj=nil)

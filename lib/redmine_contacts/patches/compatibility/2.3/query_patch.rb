@@ -17,37 +17,50 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-require_dependency 'users_controller'
-require_dependency 'user'
-
 module RedmineContacts
   module Patches
-    module UsersControllerPatch
 
+    module QueryPatch
       def self.included(base) # :nodoc:
-        base.class_eval do
-        end
         base.send(:include, InstanceMethods)
-      end
-
-      module InstanceMethods
-        def new_from_contact
-          contact = Contact.visible.find(params[:contact_id])
-          @user = User.new(:language => Setting.default_language, :mail_notification => Setting.default_notification_option)
-          @user.firstname = contact.first_name
-          @user.lastname = contact.last_name
-          @user.mail = contact.emails.first
-          @auth_sources = AuthSource.find(:all)
-          respond_to do |format|
-            format.html { render :action => 'new' }
+        base.class_eval do
+          unloadable
+          class << self
+            VISIBILITY_PRIVATE = 0
+            VISIBILITY_ROLES   = 1
+            VISIBILITY_PUBLIC  = 2
           end
-        end
 
+        end
       end
     end
+
+    module InstanceMethods
+      VISIBILITY_PRIVATE = 0
+      VISIBILITY_ROLES   = 1
+      VISIBILITY_PUBLIC  = 2
+
+      def is_private?
+        visibility == VISIBILITY_PRIVATE
+      end
+
+      def is_public?
+        !is_private?
+      end
+
+      def visibility=(value)
+        self.is_public = value == VISIBILITY_PUBLIC
+      end
+
+      def visibility
+        self.is_public ? VISIBILITY_PUBLIC : VISIBILITY_PRIVATE
+      end
+
+    end
+
   end
 end
 
-unless UsersController.included_modules.include?(RedmineContacts::Patches::UsersControllerPatch)
-  UsersController.send(:include, RedmineContacts::Patches::UsersControllerPatch)
+unless Query.included_modules.include?(RedmineContacts::Patches::QueryPatch)
+  Query.send(:include, RedmineContacts::Patches::QueryPatch)
 end

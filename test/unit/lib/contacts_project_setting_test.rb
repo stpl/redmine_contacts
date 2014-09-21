@@ -57,7 +57,7 @@ class ContactsProjectSettingTest < ActiveSupport::TestCase
                              :notes,
                              :tags,
                              :taggings,
-                             :contacts_queries])
+                             :queries])
 
   def setup
     Setting.plugin_redmine_contacts["post_address_format"] = nil

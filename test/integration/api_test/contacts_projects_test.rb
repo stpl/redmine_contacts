@@ -21,7 +21,7 @@
 
 require File.dirname(__FILE__) + '/../../test_helper'
 
-class Redmine::ApiTest::ContactsTest < ActionController::IntegrationTest
+class Redmine::ApiTest::NotesTest < ActionController::IntegrationTest
   fixtures :projects,
            :users,
            :roles,
@@ -61,57 +61,32 @@ class Redmine::ApiTest::ContactsTest < ActionController::IntegrationTest
     RedmineContacts::TestCase.prepare
   end
 
-  def test_get_contacts_xml
-    # Use a private project to make sure auth is really working and not just
-    # only showing public issues.
-    Redmine::ApiTest::Base.should_allow_api_authentication(:get, "/projects/private-child/contacts.xml")
-
-    get '/contacts.xml', {}, credentials('admin')
-
-    assert_tag :tag => 'contacts',
-      :attributes => {
-        :type => 'array',
-        :total_count => assigns(:contacts_count),
-        :limit => 25,
-        :offset => 0
-      }
-  end
-
-
-  def test_post_contacts_xml
+  test "POST /contacts/:contact_id/projects.xml" do
+    parameters = {:project => {:id => 2}}
     Redmine::ApiTest::Base.should_allow_api_authentication(:post,
-                                    '/contacts.xml',
-                                    {:contact => {:project_id => 1, :first_name => 'API test'}},
-                                    {:success_code => :created})
+                                    '/contacts/1/projects.xml',
+                                    parameters,
+                                    {:success_code => :success})
 
-    assert_difference('Contact.count') do
-      post '/contacts.xml', {:contact => {:project_id => 1, :first_name => 'API test'}}, credentials('admin')
-    end
-
-    contact = Contact.first(:order => 'id DESC')
-    assert_equal 'API test', contact.first_name
-
-    assert_response :created
-    assert_equal 'application/xml', @response.content_type
-    assert_tag 'contact', :child => {:tag => 'id', :content => contact.id.to_s}
+    post '/contacts/1/projects.xml', parameters, credentials('admin')
+    assert_response :success
+    assert_not_nil Contact.find(1).projects.where(:id => 2)
   end
 
-  # Issue 6 is on a private project
-  def test_put_contacts_1_xml
-    parameters = {:contact => {:first_name => 'API update'}}
-
-    Redmine::ApiTest::Base.should_allow_api_authentication(:put,
-                                  '/contacts/1.xml',
-                                  {:contact => {:first_name => 'API update'}},
-                                  {:success_code => :ok})
-
-    assert_no_difference('Contact.count') do
-      put '/contacts/1.xml', parameters, credentials('admin')
-    end
-
+  test "DELETE /contacts/:contact_id/projects.xml" do
     contact = Contact.find(1)
-    assert_equal "API update", contact.first_name
+    contact.projects << Project.find(2)
+    contact.save
+    Redmine::ApiTest::Base.should_allow_api_authentication(:delete,
+                                    '/contacts/1/projects/2.xml',
+                                    {},
+                                    {:success_code => :success})
 
+    delete '/contacts/1/projects/2.xml', {}, credentials('admin')
+    assert_response :success
+    contact.reload
+    assert_nil contact.projects.where(:id => 2).first
   end
+
 
 end
