@@ -19,6 +19,7 @@
 
 class ContactsDuplicatesController < ApplicationController
   unloadable
+  helper :contacts
 
   before_filter :find_project_by_project_id, :authorize, :except => :search
   before_filter :find_contact, :except => :duplicates

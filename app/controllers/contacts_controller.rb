@@ -56,6 +56,7 @@ class ContactsController < ApplicationController
     retrieve_crm_query('contact')
     sort_init(@query.sort_criteria.empty? ? [['last_name', 'asc'], ['first_name', 'asc']] : @query.sort_criteria)
     sort_update(@query.sortable_columns)
+    @query.sort_criteria = sort_criteria.to_a
 
     if @query.valid?
       case params[:format]
@@ -68,14 +69,17 @@ class ContactsController < ApplicationController
       else
         @limit = per_page_option
       end
-      @contacts_count = @query.contact_count
+      @contacts_count = @query.object_count
       @contacts_pages = Paginator.new(self, @contacts_count, @limit, params['page'])
       @offset ||= @contacts_pages.current.offset
-      @contact_count_by_group = @query.contact_count_by_group
-      @contacts = @query.results_scope(:search => params[:search]).all(:include => [:avatar],
-                                       :order => sort_clause,
-                                       :offset => @offset,
-                                       :limit => @limit)
+      @contact_count_by_group = @query.object_count_by_group
+      @contacts = @query.results_scope(
+        :include => [:avatar],
+        :search => params[:search],
+        :order => sort_clause,
+        :limit  =>  @limit,
+        :offset =>  @offset
+      )
       @filter_tags = @query.filters["tags"] && @query.filters["tags"][:values]
 
       respond_to do |format|

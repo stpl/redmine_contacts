@@ -4,6 +4,16 @@ Redmine CRM plugin - customer relationship management plugin for redmine
 Copyright (C) 2011-2014 Kirill Bezrukov
 http://www.redminecrm.com/
 
+== 2014-10-02 v3.4.1
+
+* Seaching contacts by email in global redmine search
+* Default country for address selection
+* Greek translation (Filippos Karapetis)
+* CSV import utf-8 fixes
+* Fixed global list assignees and authors filters
+* Fixed bug with contacts list custom field sorting
+* Add uniqueness for contact first name on scope last name, company and email
+
 == 2014-09-21 v3.4.0
 
 * Deal issues

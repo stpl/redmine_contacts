@@ -74,4 +74,16 @@ class SearchControllerTest < ActionController::TestCase
     assert assigns(:results).include?(Contact.find(1))
   end
 
+  def test_search_for_contacts_by_email
+    @request.session[:user_id] = 1
+    get :index
+    assert_response :success
+    assert_template 'index'
+
+    get :index, :q => "marat@mail.ru"
+    assert_response :success
+    assert_template 'index'
+    assert assigns(:results).include?(Contact.find(2))
+  end
+
 end

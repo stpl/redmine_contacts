@@ -88,6 +88,22 @@ class ContactTest < ActiveSupport::TestCase
 
   end
 
+  def test_create_nonunique
+    contact = Contact.find(1)
+    new_contact = Contact.new(:project => Project.find('ecookbook'),
+      :first_name => contact.first_name,
+      :last_name => contact.last_name,
+      :company => contact.company,
+      :email => contact.email
+    )
+
+    assert !new_contact.valid?, "No error found for nonunique contact"
+    assert_include "First Name has already been taken", new_contact.errors.full_messages
+
+    new_contact.first_name += '_new'
+    assert new_contact.valid?, "Unique contact should be valid"
+  end
+
   def test_visible_scope_for_non_member_without_view_contacts_permissions
     # Non member user should not see issues without permission
     Role.non_member.remove_permission!(:view_contacts)

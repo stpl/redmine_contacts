@@ -572,3 +572,10 @@ ru:
 
   #3.4.0
   label_crm_deal_contact: Контакт сделки
+
+  #3.4.1
+  label_crm_default_country: Страна по умолчанию
+  label_attribute_of_contact: "%{name} контакта"
+  label_crm_contact_country: Страна контакта
+  label_crm_contact_city: Город контакта
+  label_attribute_of_deals: "%{name} сделки"

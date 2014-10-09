@@ -90,8 +90,20 @@ module RedmineContacts
       return link_to note_source.name, note_source_url(note_source, options)
     end
 
+    def countries_options_for_select(selected=nil)
+      default_country = l(:label_crm_countries)[ContactsSetting.default_country.to_s.upcase.to_sym] if ContactsSetting.default_country
+      countries = countries_for_select
+      countries = [[default_country, ContactsSetting.default_country.to_s.upcase], ["---", ""]] | countries if default_country
+      options_for_select(countries, :disabled => "", :selected => selected)
+    end
+
+
+    def countries_for_select
+      l(:label_crm_countries).map{|k, v| [v, k.to_s]}.sort
+    end
+
     def select_contact_tag(name, contact, options={})
-      cross_project_contacts = RedmineContacts.cross_project_contacts? || !!options.delete(:cross_project_contacts)
+      cross_project_contacts = ContactsSetting.cross_project_contacts? || !!options.delete(:cross_project_contacts)
       field_id = sanitize_to_id(name)
       is_select = !!options[:is_select]
       display_field = !!options[:display_field]
@@ -167,10 +179,6 @@ module RedmineContacts
         end
       elsif obj.respond_to?(:facebook) &&  !obj.facebook.blank?
         image_tag("https://graph.facebook.com/#{obj.facebook.gsub('.*facebook.com\/','')}/picture?type=square#{'&return_ssl_resources=1' if (request && request.ssl?)}", options)
-      elsif obj.is_a?(Contact) && obj.primary_email && obj.primary_email =~ %r{^(.*)@mail.ru$}
-        image_tag("http#{'s' if (request && request.ssl?)}://avt.appsmail.ru/mail/#{$1}/_avatar", options)
-      elsif obj.respond_to?(:twitter) &&  !obj.twitter.blank?
-        image_tag("https://api.twitter.com/1/users/profile_image?screen_name=#{obj.twitter}&size=bigger", options)
       elsif Setting.gravatar_enabled? && obj.is_a?(Contact) && obj.primary_email
         # options.merge!({:ssl => (request && request.ssl?), :default => "#{request.protocol}#{request.host_with_port}/plugin_assets/redmine_contacts/images/#{obj_icon}"})
         # gravatar(obj.primary_email.downcase, options) rescue image_tag(obj_icon, options.merge({:plugin => "redmine_contacts"}))

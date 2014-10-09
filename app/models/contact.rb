@@ -67,6 +67,7 @@ class Contact < ActiveRecord::Base
                                   "#{table_name}.middle_name",
                                   "#{table_name}.last_name",
                                   "#{table_name}.company",
+                                  "#{table_name}.email",
                                   "#{Address.table_name}.full_address",
                                   "#{table_name}.background",
                                   "#{ContactNote.table_name}.content"],
@@ -104,6 +105,7 @@ class Contact < ActiveRecord::Base
 
 
   validates_presence_of :first_name, :project
+  validates_uniqueness_of :first_name, :scope => [:last_name, :company, :email]
 
   after_create :send_notification
 

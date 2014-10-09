@@ -562,3 +562,15 @@ de:
 
   #3.2.14
   label_crm_last_year: Letztes Jahr
+
+  #3.2.15
+  permission_export_contacts: Export contacts and deals
+
+  #3.4.0
+  label_crm_deal_contact: Deal's contact
+
+  #3.4.1
+  label_crm_default_country: Default country
+  label_attribute_of_contact: "Kontaktname %{name}"
+  label_crm_contact_country: Contact's country
+  label_crm_contact_city: Contact's city

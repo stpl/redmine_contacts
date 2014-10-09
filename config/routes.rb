@@ -40,6 +40,12 @@
 
   end
 
+  resources :projects do
+    resources :crm_queries, :only => [:new, :create]
+  end
+
+  resources :crm_queries, :except => [:show]
+
   resources :notes
 
   match '/contacts_tags', :controller => 'contacts_tags', :action => 'destroy', :via => :delete

@@ -103,8 +103,7 @@ private
   def open_import_source
     begin
       content = file.read
-      Rails.logger.info "quotes_type = #{quotes_type}"
-      FCSV.parse(content, :headers => true, :header_converters => [:downcase], :encoding => 'utf-8', :col_sep => guess_separator(content), :quote_char => quotes_type)
+      FCSV.parse(content, :headers => true, :header_converters => [:downcase], :encoding => 'utf-8', :col_sep => guess_separator(force_utf8(content)), :quote_char => quotes_type)
     rescue Exception => e
       Rails.logger.info $!.message
       Rails.logger.info $!.backtrace.join("\n")

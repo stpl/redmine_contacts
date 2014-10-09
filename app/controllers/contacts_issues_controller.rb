@@ -42,6 +42,7 @@ class ContactsIssuesController < ApplicationController
       flash[:notice] = l(:notice_successful_add)
       redirect_to :back
     else
+      flash[:error] = issue.errors.full_messages.join("<br>").html_safe
       redirect_to :back
     end
   end
