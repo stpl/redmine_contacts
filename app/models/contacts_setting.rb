@@ -87,6 +87,14 @@ class ContactsSetting < ActiveRecord::Base
     !!Setting.plugin_redmine_contacts["contacts_show_in_app_menu"]
   end
 
+  def self.default_country
+    Setting.plugin_redmine_contacts["default_country"]
+  end
+
+  def self.cross_project_contacts?
+    Setting.plugin_redmine_contacts["cross_project_contacts"].to_i > 0
+  end
+
   # Finance
 
   def self.default_currency

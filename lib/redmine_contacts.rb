@@ -62,10 +62,6 @@ module RedmineContacts
   	RedmineContacts.settings["select_companies_to_deal"]
   end
 
-  def self.cross_project_contacts?
-  	!!RedmineContacts.settings["cross_project_contacts"]
-  end
-
   def self.settings() Setting[:plugin_redmine_contacts].blank? ? {} : Setting[:plugin_redmine_contacts]  end
 
   def self.default_list_style

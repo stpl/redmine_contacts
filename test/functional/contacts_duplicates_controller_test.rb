@@ -66,7 +66,7 @@ class ContactsDuplicatesControllerTest < ActionController::TestCase
     User.current = nil
   end
 
-  test "should merge duplicates" do
+  def test_get_merge_duplicates
     # log_user('admin', 'admin')
     @request.session[:user_id] = 1
     Setting.default_language = 'en'
@@ -76,6 +76,18 @@ class ContactsDuplicatesControllerTest < ActionController::TestCase
 
     contact = Contact.find(2)
     assert_equal contact.emails, ["marat@mail.ru", "marat@mail.com", "ivan@mail.com"]
+  end
+
+  def test_xhr_get_duplicates
+    @request.session[:user_id] = 1
+    xhr :get, :duplicates, :project_id => 'ecookbook', :contact => {:first_name => 'marat'}
+    assert_match /Marat Aminov/, @response.body
+  end
+
+  def test_xhr_get_search
+    @request.session[:user_id] = 1
+    xhr :get, :search, :project_id => 'ecookbook', :contact_id => 2, :q => 'iva'
+    assert_match /Ivan Ivanov/, @response.body
   end
 
 end

@@ -95,4 +95,23 @@ class AutoCompletesControllerTest < ActionController::TestCase
     assert_equal 'Domoway', contact['value']
     assert_equal 'Domoway', contact['label']
   end
+
+  def test_contact_tags_should_return_json
+    get :contact_tags, :q => 'ma'
+    assert_response :success
+    json = ActiveSupport::JSON.decode(response.body)
+    assert_kind_of Array, json
+    tag = json.last
+    assert_match 'main', tag
+  end
+
+  def test_taggable_tags_should_return_json
+    get :taggable_tags, :q => 'ma', :taggable_type => 'contact'
+    assert_response :success
+    json = ActiveSupport::JSON.decode(response.body)
+    assert_kind_of Array, json
+    tag = json.last
+    assert_match 'main', tag
+  end
+
 end

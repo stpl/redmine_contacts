@@ -10,6 +10,11 @@
 </p>
 
 <p>
+  <label><%= l(:label_crm_default_country) %></label>
+  <%= select_tag  'settings[default_country]', options_for_select(countries_for_select, ContactsSetting.default_country) %>
+</p>
+
+<p>
   <label><%= l(:label_crm_show_in_top_menu) %></label>
   <span id="watchers_inputs">
     <span class="floating" style="margin-left: 0px;">

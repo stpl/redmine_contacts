@@ -55,7 +55,8 @@ class ContactsControllerTest < ActionController::TestCase
                              :notes,
                              :tags,
                              :taggings,
-                             :queries])
+                             :queries,
+                             :addresses])
 
 
   def setup
