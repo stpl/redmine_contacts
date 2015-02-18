@@ -12,8 +12,9 @@ matrix:
     - rvm: 1.8.7
 
 env:
-  - REDMINE_VERSION=2.5.2 VERBOSE=yes
-  - REDMINE_VERSION=2.4.6 VERBOSE=yes
+  - REDMINE_VERSION=2.6.1 VERBOSE=yes
+  - REDMINE_VERSION=2.5.3 VERBOSE=yes
+  - REDMINE_VERSION=2.4.7 VERBOSE=yes
 
 before_install:
   - git submodule add https://github.com/RCRM/redmine_plugins_travis-ci travis
