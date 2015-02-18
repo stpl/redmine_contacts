@@ -30,7 +30,9 @@ module RedmineContacts
 
     def prices_collection_by_currency(prices_collection, options={})
       return [] if prices_collection.blank? || prices_collection == 0
-      prices_collection.collect{|c| content_tag(:span, price_to_currency(c[1], c[0], :symbol => true), :style => "white-space: nowrap;") unless c[1] == 0 && options[:hide_zeros]}.compact
+      prices = prices_collection
+      prices.reject!{|k, v| v.to_i == 0} if options[:hide_zeros]
+      prices.collect{|k, v| content_tag(:span, price_to_currency(v, k, :symbol => true), :style => "white-space: nowrap;")}.compact
     end
 
     def deal_currency_icon(currency)
@@ -56,7 +58,7 @@ module RedmineContacts
       currencies |= ContactsSetting.major_currencies
       currencies.map do |c|
         currency = Money::Currency.find(c)
-        ["#{currency.name} (#{currency.symbol})", currency.iso_code] if currency
+        ["#{currency.iso_code} (#{currency.symbol})", currency.iso_code] if currency
       end.compact.uniq
     end
 

@@ -25,20 +25,6 @@ class TasksController < ApplicationController
   before_filter :find_taskable, :except => [:index, :add, :close]
   before_filter :find_issue, :except => [:index, :new]
 
-  def index
-    cond = "(1=1)"
-    # cond = "issues.assigned_to_id = #{User.current.id}"
-    cond << " and issues.project_id = #{@project.id}" if @project
-    cond << " and (issues.assigned_to_id = #{params[:assigned_to]})" unless params[:assigned_to].blank?
-
-    @tasks = Issue.visible.find(:all,
-                                :joins => "INNER JOIN tasks ON issues.id = tasks.issue_id",
-                                # :group => :issue_id,
-                                :conditions => cond,
-                                :order => "issues.due_date")
-    @users = assigned_to_users
-  end
-
   def new
     issue = Issue.new
     issue.subject = params[:task_subject]
@@ -121,22 +107,6 @@ class TasksController < ApplicationController
     @issue = Issue.find(params[:issue_id])
   rescue ActiveRecord::RecordNotFound
     render_404
-  end
-
-  def assigned_to_users
-    user_values = []
-    project = @project
-    user_values << ["<< #{l(:label_all)} >>", ""]
-    user_values << ["<< #{l(:label_me)} >>", User.current.id] if User.current.logged?
-    if project
-      user_values += project.users.sort.collect{|s| [s.name, s.id.to_s] }
-    else
-      project_ids = Project.all(:conditions => Project.visible_condition(User.current)).collect(&:id)
-      if project_ids.any?
-        # members of the user's projects
-        user_values += User.active.find(:all, :conditions => ["#{User.table_name}.id IN (SELECT DISTINCT user_id FROM members WHERE project_id IN (?))", project_ids]).sort.collect{|s| [s.name, s.id.to_s] }
-      end
-    end
   end
 
 

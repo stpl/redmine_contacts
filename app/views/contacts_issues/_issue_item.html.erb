@@ -4,7 +4,8 @@
   </td>
 
   <td class="issue_item_subject">
-    <%= link_to(issue_item.subject, {:controller => :issues, :action => :show, :id => issue_item}, :class => "issue status-#{issue_item.status_id} priority-#{issue_item.priority_id} #{'closed' if issue_item.closed?}") + avatar(issue_item.assigned_to, :size => "14").to_s.html_safe %>
+    <%= link_to(issue_item.subject, {:controller => :issues, :action => :show, :id => issue_item}, :class => "issue status-#{issue_item.status_id} priority-#{issue_item.priority_id} #{'closed' if issue_item.closed?}") %>
+    <%= avatar(issue_item.assigned_to, :size => "14", :title => issue_item.assigned_to.name).to_s.html_safe if issue_item.assigned_to %>
   </td>
   <td style="vertical-align: top; text-align: right;"><%= format_date(issue_item.due_date) %></td>
 </tr>

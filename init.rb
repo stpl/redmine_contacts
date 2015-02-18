@@ -17,7 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-CONTACTS_VERSION_NUMBER = '3.4.1'
+require 'redmine'
+
+CONTACTS_VERSION_NUMBER = '3.4.4'
 CONTACTS_VERSION_TYPE = "Light version"
 
 Redmine::Plugin.register :redmine_contacts do
@@ -57,11 +59,15 @@ Redmine::Plugin.register :redmine_contacts do
     permission :edit_contacts, {
       :contacts => [:edit, :update, :bulk_update, :bulk_edit],
       :notes => [:create, :destroy, :edit, :update],
-      :contacts_issues => [:new, :create_issue, :create, :delete, :close, :autocomplete_for_contact],
       :contacts_duplicates => [:index, :merge, :duplicates],
       :contacts_projects => [:new, :destroy, :create],
       :contacts_vcf => [:load]
     }
+
+    permission :manage_contact_issue_relations, {
+      :contacts_issues => [:new, :create_issue, :create, :delete, :close, :autocomplete_for_contact],
+    }
+
     permission :delete_contacts, :contacts => [:destroy, :bulk_destroy]
     permission :add_notes, :notes => [:create]
     permission :delete_notes, :notes => [:destroy, :edit, :update]
@@ -87,7 +93,6 @@ Redmine::Plugin.register :redmine_contacts do
                           :if => Proc.new{ User.current.allowed_to?({:controller => 'contacts', :action => 'index'},
                                           nil, {:global => true})  && ContactsSetting.contacts_show_in_app_menu? }
 
-
   menu :admin_menu, :contacts, {:controller => 'settings', :action => 'plugin', :id => "redmine_contacts"}, :caption => :contacts_title
 
   activity_provider :contacts, :default => false, :class_name => ['ContactNote', 'Contact']
@@ -98,4 +103,6 @@ Redmine::Plugin.register :redmine_contacts do
 
 end
 
-require 'redmine_contacts'
+ActionDispatch::Callbacks.to_prepare do
+  require 'redmine_contacts'
+end

@@ -34,6 +34,20 @@ module ContactsHelper
      [l(:label_crm_contacts_visibility_private), Contact::VISIBILITY_PRIVATE]]
   end
 
+  def contact_list_styles_for_select
+    list_styles = [[l(:label_crm_list_excerpt), "list_excerpt"]]
+  end
+
+  def contacts_list_style
+    list_styles = contact_list_styles_for_select.map(&:last)
+    if params[:contacts_list_style].blank?
+      list_style = list_styles.include?(session[:contacts_list_style]) ? session[:contacts_list_style] : RedmineContacts.default_list_style
+    else
+      list_style = list_styles.include?(params[:contacts_list_style]) ? params[:contacts_list_style] : RedmineContacts.default_list_style
+    end
+    session[:contacts_list_style] = list_style
+  end
+
   def authorized_for_permission?(permission, project, global = false)
     User.current.allowed_to?(permission, project, :global => global)
   end

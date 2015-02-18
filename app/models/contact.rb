@@ -22,10 +22,56 @@ class Contact < ActiveRecord::Base
   include Redmine::SafeAttributes
 
   CONTACT_FORMATS = {
-    :lastname_firstname_middlename => '#{last_name} #{first_name} #{middle_name}',
-    :firstname_middlename_lastname => '#{first_name} #{middle_name} #{last_name}',
-    :firstname_lastname => '#{first_name} #{last_name}',
-    :lastname_coma_firstname => '#{last_name}, #{first_name}'
+    :firstname_lastname => {
+        :string => '#{first_name} #{last_name}',
+        :order => %w(first_name middle_name last_name id),
+        :setting_order => 1
+      },
+    :lastname_firstname_middlename => {
+        :string => '#{last_name} #{first_name} #{middle_name}',
+        :order => %w(last_name first_name middle_name id),
+        :setting_order => 1
+     },
+    :firstname_middlename_lastname => {
+        :string => '#{first_name} #{middle_name} #{last_name}',
+        :order => %w(first_name middle_name last_name id),
+        :setting_order => 1
+    },
+    :firstname_lastinitial => {
+        :string => '#{first_name} #{middle_name.to_s.chars.first + \'.\' unless middle_name.blank?} #{last_name.to_s.chars.first + \'.\' unless last_name.blank?}',
+        :order => %w(first_name middle_name last_name id),
+        :setting_order => 2
+      },
+    :firstinitial_lastname => {
+        :string => '#{first_name.to_s.gsub(/(([[:alpha:]])[[:alpha:]]*\.?)/, \'\2.\')} #{middle_name.to_s.chars.first + \'.\' unless middle_name.blank?} #{last_name}',
+        :order => %w(first_name middle_name last_name id),
+        :setting_order => 2
+      },
+    :lastname_firstinitial => {
+        :string => '#{last_name} #{first_name.to_s.gsub(/(([[:alpha:]])[[:alpha:]]*\.?)/, \'\2.\')} #{middle_name.to_s.chars.first + \'.\' unless middle_name.blank?}',
+        :order => %w(last_name first_name middle_name id),
+        :setting_order => 2
+      },
+    :firstname => {
+        :string => '#{first_name}',
+        :order => %w(first_name middle_name id),
+        :setting_order => 3
+      },
+    :lastname_firstname => {
+        :string => '#{last_name} #{first_name}',
+        :order => %w(last_name first_name middle_name id),
+        :setting_order => 4
+      },
+    :lastname_coma_firstname => {
+        :string => '#{last_name.to_s + \',\' unless last_name.blank?} #{first_name}',
+        :order => %w(last_name first_name middle_name id),
+        :setting_order => 5
+      },
+    :lastname => {
+        :string => '#{last_name}',
+        :order => %w(last_name id),
+        :setting_order => 6
+      }
   }
 
   VISIBILITY_PROJECT = 0
@@ -34,14 +80,14 @@ class Contact < ActiveRecord::Base
 
   delegate :street1, :city, :country, :postcode, :region, :post_address, :to => :address, :allow_nil => true
 
-  has_many :notes, :as => :source, :class_name => 'ContactNote', :dependent => :delete_all, :order => "created_on DESC"
-  belongs_to :assigned_to, :class_name => 'User', :foreign_key => 'assigned_to_id'
-  has_and_belongs_to_many :issues, :order => "#{Issue.table_name}.due_date", :uniq => true
-  has_and_belongs_to_many :projects, :uniq => true
-  belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
-  has_one :avatar, :class_name => "Attachment", :as  => :container, :conditions => "#{Attachment.table_name}.description = 'avatar'", :dependent => :destroy
-  has_one :address, :dependent => :destroy, :as => :addressable, :class_name => "Address", :conditions => {:address_type => "business"}
+  has_many :notes, :as => :source, :class_name => 'ContactNote', :dependent => :delete_all
   has_many :addresses, :dependent => :destroy, :as => :addressable, :class_name => "Address"
+  belongs_to :assigned_to, :class_name => 'User', :foreign_key => 'assigned_to_id'
+  belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
+  has_and_belongs_to_many :projects, :uniq => true
+  has_and_belongs_to_many :issues, :order => "#{Issue.table_name}.due_date", :uniq => true
+  has_one :avatar, :conditions => "#{Attachment.table_name}.description = 'avatar'", :class_name => "Attachment", :as  => :container, :dependent => :destroy
+  has_one :address, :conditions => {:address_type => "business"}, :dependent => :destroy, :as => :addressable, :class_name => "Address"
 
   attr_accessor :phones
   attr_accessor :emails
@@ -53,10 +99,10 @@ class Contact < ActiveRecord::Base
 
 
   acts_as_event :datetime => :created_on,
-                :url => Proc.new {|o| {:controller => 'contacts', :action => 'show', :id => o}},
+                :url => lambda {|o| {:controller => 'contacts', :action => 'show', :id => o}},
                 :type => 'icon-contact',
-                :title => Proc.new {|o| o.name },
-                :description => Proc.new {|o| [o.info, o.company, o.email, o.address, o.background].join(' ') }
+                :title => lambda {|o| o.name },
+                :description => lambda {|o| [o.info, o.company, o.email, o.address, o.background].join(' ') }
 
   acts_as_activity_provider :type => 'contacts',
                             :permission => :view_contacts,
@@ -83,10 +129,10 @@ class Contact < ActiveRecord::Base
   scope :editable, lambda {|*args| includes(:projects).where(Contact.editable_condition(args.shift || User.current, *args)) }
   scope :by_project, lambda {|prj| joins(:projects).where("#{Project.table_name}.id = ?", prj) unless prj.blank? }
   scope :like_by, lambda {|field, search| {:conditions => ["LOWER(#{Contact.table_name}.#{field}) LIKE ?", search.downcase + "%"] }}
-  scope :companies, where(:is_company => true)
-  scope :people, where(:is_company => false)
-  scope :order_by_name, :order => "#{Contact.table_name}.last_name, #{Contact.table_name}.first_name"
-  scope :order_by_creation, :order => "#{Contact.table_name}.created_on DESC"
+  scope :companies, lambda { where(:is_company => true) }
+  scope :people, lambda { where(:is_company => false) }
+  scope :order_by_name, lambda { order(Contact.fields_for_order_statement) }
+  scope :order_by_creation, lambda { order("#{Contact.table_name}.created_on DESC") }
 
   scope :by_name, lambda {|search| where("(LOWER(#{Contact.table_name}.first_name) LIKE LOWER(:p) OR
                                                                   LOWER(#{Contact.table_name}.last_name) LIKE LOWER(:p) OR
@@ -105,7 +151,7 @@ class Contact < ActiveRecord::Base
 
 
   validates_presence_of :first_name, :project
-  validates_uniqueness_of :first_name, :scope => [:last_name, :company, :email]
+  # validates_uniqueness_of :first_name, :scope => [:last_name, :company, :email]
 
   after_create :send_notification
 
@@ -177,15 +223,11 @@ class Contact < ActiveRecord::Base
     joins << "JOIN #{Contact.table_name} ON #{Contact.table_name}.id = #{ActsAsTaggableOn::Tagging.table_name}.taggable_id AND #{ActsAsTaggableOn::Tagging.table_name}.taggable_type =  '#{Contact.name}' "
     joins << Contact.projects_joins
 
-    options = {}
-    options[:select] = "#{ActsAsTaggableOn::Tag.table_name}.*, COUNT(DISTINCT #{ActsAsTaggableOn::Tagging.table_name}.taggable_id) AS count"
-    options[:joins] = joins.flatten
-    options[:group] = "#{ActsAsTaggableOn::Tag.table_name}.id, #{ActsAsTaggableOn::Tag.table_name}.name HAVING COUNT(*) > 0"
-    options[:order] = "#{ActsAsTaggableOn::Tag.table_name}.name"
-    options[:limit] = limit if limit
-
-    scope.find(:all, options)
-
+    scope = scope.select("#{ActsAsTaggableOn::Tag.table_name}.*, COUNT(DISTINCT #{ActsAsTaggableOn::Tagging.table_name}.taggable_id) AS count")
+    scope = scope.joins(joins.flatten)
+    scope = scope.group("#{ActsAsTaggableOn::Tag.table_name}.id, #{ActsAsTaggableOn::Tag.table_name}.name HAVING COUNT(*) > 0")
+    scope = scope.limit(limit) if limit
+    scope
   end
 
   def duplicates(limit=10)
@@ -194,7 +236,7 @@ class Contact < ActiveRecord::Base
     scope = scope.like_by("middle_name",  self.middle_name.strip) if !self.middle_name.blank?
     scope = scope.like_by("last_name",  self.last_name.strip) if !self.last_name.blank?
     scope = scope.scoped(:conditions => ["#{Contact.table_name}.id <> ?", self.id]) if !self.new_record?
-    @duplicates ||= (self.first_name.blank? && self.last_name.blank? && self.middle_name.blank?) ? [] : scope.visible.find(:all, :limit => limit)
+    @duplicates ||= (self.first_name.blank? && self.last_name.blank? && self.middle_name.blank?) ? [] : scope.visible.limit(limit)
   end
 
   def company_contacts
@@ -211,9 +253,7 @@ class Contact < ActiveRecord::Base
   end
 
   def notes_attachments
-    @contact_attachments ||= Attachment.find(:all,
-                                    :conditions => { :container_type => "Note", :container_id => self.notes.map(&:id)},
-                                    :order => "created_on DESC")
+    @contact_attachments ||= Attachment.where({ :container_type => "Note", :container_id => self.notes.map(&:id)}).order(:created_on)
   end
 
   # usr for mailer
@@ -285,23 +325,37 @@ class Contact < ActiveRecord::Base
     emails.each do |mail|
       cond << " OR (LOWER(#{Contact.table_name}.email) LIKE '%#{mail.gsub("'", "").gsub("\"", "")}%')"
     end
-    contacts = Contact.find(:all, :conditions => cond)
+    contacts = Contact.where(cond)
     contacts.select{|c| (c.emails.map{|e| e.downcase } & emails).any? }
   end
 
-  def name(formatter=nil)
-    if !self.is_company
-      if formatter
-        eval('"' + (CONTACT_FORMATS[formatter] || CONTACT_FORMATS[:firstname_lastname]) + '"')
-      else
-        @name ||= eval('"' + (Setting.plugin_redmine_contacts[:name_format] && CONTACT_FORMATS[Setting.plugin_redmine_contacts[:name_format].to_sym] || CONTACT_FORMATS[:firstname_lastname]) + '"')
-      end
+  def self.name_formatter(formatter = nil)
+    CONTACT_FORMATS[formatter || ContactsSetting.contact_name_format.to_sym]
+  end
 
-      # [self.last_name, self.first_name, self.middle_name].each {|field| result << field unless field.blank?}
+  # Returns an array of fields names than can be used to make an order statement for users
+  # according to how user names are displayed
+  # Examples:
+  #
+  #   Contact.fields_for_order_statement              => ['contacts.first_name', 'contacts.first_name', 'contacts.id']
+  #   Contact.fields_for_order_statement('customers')   => ['customers.last_name', 'customers.id']
+  def self.fields_for_order_statement(table=nil)
+    table ||= table_name
+    name_formatter[:order].map {|field| "#{table}.#{field}"}
+  end
+
+  # Return contacts's full name for display
+  def name(formatter = nil)
+    unless self.is_company?
+      f = self.class.name_formatter(formatter)
+      if formatter
+        eval('"' + f[:string] + '"')
+      else
+        @name ||= eval('"' + f[:string] + '"')
+      end
     else
       self.first_name
     end
-
   end
 
   def info
@@ -345,7 +399,6 @@ class Contact < ActiveRecord::Base
     if assigned_to
       notified += (assigned_to.is_a?(Group) ? assigned_to.users : [assigned_to])
     end
-    notified = notified.select {|u| u.active? && u.notify_about?(self)}
 
     notified += project.notified_users
 
@@ -353,6 +406,7 @@ class Contact < ActiveRecord::Base
       notified += contact_company.notified_users
     end
 
+    notified = notified.select {|u| u.active? }
     notified.uniq!
     # Remove users that can not view the issue
     notified.reject! {|user| !visible?(user)}

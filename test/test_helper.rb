@@ -21,6 +21,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../test/test_helper')
 
+
 def redmine_contacts_fixture_files_path
   "#{Rails.root}/plugins/redmine_contacts/test/fixtures/files/"
 end

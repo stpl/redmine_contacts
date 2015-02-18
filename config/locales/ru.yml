@@ -579,3 +579,12 @@ ru:
   label_crm_contact_country: Страна контакта
   label_crm_contact_city: Город контакта
   label_attribute_of_deals: "%{name} сделки"
+
+  #3.4.2
+  permission_manage_public_deals_queries: Управление общими запросами для сделок
+  permission_save_deals_queries: Сохранение запросов для сделок
+  permission_manage_contact_issue_relations: Управление связыванием с задачами
+
+  #3.4.4
+  label_crm_pipeline: Воронка продаж
+  text_crm_no_deal_statuses_in_project: В проекте нет активных статусов для сделок

@@ -6,7 +6,7 @@
         <li><%= link_to tab[:label], tabs_contact_path(@contact, :tab => tab[:name]),
                         :id => "tab-#{tab[:name]}",
                         :class => (tab[:name] != selected_tab ? 'tab-header' : 'selected tab-header'),
-                        :data => { :name => tab[:name], :partial => tab[:partial] },
+                        :data => { :name => tab[:name], :partial => tab[:partial], :project_id => @project},
                         :onclick => "showTab('#{tab[:name]}'); this.blur(); return false;" %></li>
     <% end -%>
   </ul>
@@ -18,7 +18,7 @@
 
 <% tabs.each do |tab| %>
     <% selected = tab[:name] == selected_tab %>
-    <div class='tab-placeholder tab-content <%= 'active' if tab == tabs.first %>' id='tab-placeholder-<%= tab[:name] %>' style='<%= "display: block" if selected %>'>
+    <div class='tab-placeholder tab-content <%= 'active loaded' if selected %>' id='tab-placeholder-<%= tab[:name] %>' style='<%= "display: block" if selected %>'>
       <%= render(:partial => tab[:partial]) if selected %>
     </div>
 <% end %>

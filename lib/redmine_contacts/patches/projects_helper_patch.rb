@@ -41,11 +41,10 @@ module RedmineContacts
           tabs.push({ :name => 'contacts',
             :action => :manage_contacts,
             :partial => 'projects/contacts_settings',
-            :label => :label_contact_plural })
-          tabs.select {|tab| User.current.allowed_to?(tab[:action], @project)}
+            :label => :label_contact_plural }) if User.current.allowed_to?(:manage_contacts, @project)
+          tabs
 
         end
-
       end
 
     end

@@ -61,14 +61,6 @@ class Note < ActiveRecord::Base
     self.source.visible?(usr)
   end
 
-  def self.available_authors(prj=nil)
-    options = {}
-    options[:select] = "DISTINCT #{User.table_name}.*"
-    options[:joins] = "JOIN #{Note.table_name} nnnn ON nnnn.author_id = #{User.table_name}.id"
-    options[:order] = "#{User.table_name}.lastname, #{User.table_name}.firstname"
-    prj.nil? ? User.active.find(:all, options) : prj.users.active.find(:all, options)
-  end
-
   def project
      self.source.respond_to?(:project) ? self.source.project : nil
   end

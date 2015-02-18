@@ -52,19 +52,16 @@
 
   resources :contacts_tags do
     collection do
-      post :merge, :context_menu
+      post :merge, :context_menucha
       get :context_menu, :merge
     end
   end
 
   match 'projects/:project_id/contacts/:contact_id/new_task' => 'contacts_issues#new', :via => :post
 
-  match 'contacts/:contact_id/duplicates' => 'contacts_duplicates#index'
+  match 'contacts/:contact_id/duplicates' => 'contacts_duplicates#index', :via => [:get, :post]
 
-  match 'projects/:project_id/deal_categories/new' => 'deal_categories#new'
-
-  match 'projects/:project_id/sales_funnel'  => 'sales_funnel#index'
-  match 'sales_funnel/:action' => 'sales_funnel#index'
+  match 'projects/:project_id/deal_categories/new' => 'deal_categories#new', :via => [:get, :post]
 
 
   match 'auto_completes/taggable_tags' => 'auto_completes#taggable_tags', :via => :get, :as => 'auto_complete_taggable_tags'
@@ -73,14 +70,12 @@
   match 'auto_completes/companies' => 'auto_completes#companies', :via => :get, :as => 'auto_complete_companies'
 
   match 'users/new_from_contact/:id' => 'users#new_from_contact', :via => :get
-  match 'contacts_duplicates/:action' => 'contacts_duplicates'
+  match 'contacts_duplicates/:action' => 'contacts_duplicates', :via => [:get, :post]
   match 'contacts_duplicates/search' => 'contacts_duplicates#search', :via => :get, :as => 'contacts_duplicates_search'
-  match 'contacts_issues/:action' => 'contacts_issues'
-  match 'contacts_vcf/:action' => 'contacts_vcf'
-  match 'deal_categories/:action' => 'deal_categories'
-  match 'deal_contacts/:action' => 'deal_contacts'
-  match 'deals_tasks/:action' => 'deals_tasks'
-  match 'contacts_settings/:action' => 'contacts_settings'
-  match 'contacts_mailer/:action' => 'contacts_mailer'
-  match 'deals_tasks/:action' => 'deals_tasks'
+  match 'contacts_issues/:action' => 'contacts_issues', :via => [:get, :post, :delete, :put]
+  match 'contacts_vcf/:action' => 'contacts_vcf', :via => [:get, :post]
+  match 'deal_contacts/:action' => 'deal_contacts', :via => [:get, :post, :delete]
+  match 'deals_tasks/:action' => 'deals_tasks', :via => [:get, :post, :put]
+  match 'contacts_settings/:action' => 'contacts_settings', :via => [:get, :post]
+  match 'contacts_mailer/:action' => 'contacts_mailer', :via => [:get, :post]
   match 'attachments/contacts_thumbnail/:id(/:size)', :controller => 'attachments', :action => 'contacts_thumbnail', :id => /\d+/, :via => :get

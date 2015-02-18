@@ -67,6 +67,10 @@ class ContactsSetting < ActiveRecord::Base
     logger.info "Contacts settings cache cleared." if logger
   end
 
+  def self.contact_name_format
+    Setting.plugin_redmine_contacts["name_format"] || :firstname_lastname
+  end
+
   def self.vcard?
     Object.const_defined?(:Vcard)
   end

@@ -113,7 +113,7 @@ class ContactsIssuesControllerTest < ActionController::TestCase
   end
 
   def test_create_multiple
-    @request.session[:user_id] = 2
+    @request.session[:user_id] = 1
     assert_difference('ContactsIssue.count', 2) do
       xhr :post, :create, :issue_id => '2', :contacts_issue => {:contact_ids => ['3', '4']}
       assert_response :success

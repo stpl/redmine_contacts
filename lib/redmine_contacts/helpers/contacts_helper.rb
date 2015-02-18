@@ -148,7 +148,7 @@ module RedmineContacts
               :id => link_id,
               :style => display_field ? "display: none;" : "")
       s << text_field_tag(name, contact.blank? ? '' : contact.id, :style => display_field ? "" : "display: none;", :placeholder => l(:label_crm_contact_search), :id =>  field_id, :class => "autocomplete")
-      s << javascript_tag("initContactsAutocomplete('#{name}', '#{escape_javascript auto_complete_contacts_path(:project_id => options[:project_id], :is_company => options[:is_company])}', '#{escape_javascript options[:select_url]}');");
+      s << javascript_tag("initContactsAutocomplete('#{name}', '#{escape_javascript auto_complete_contacts_path(:project_id => options[:project_id], :is_company => (options[:is_company] ? "1" : nil))}', '#{escape_javascript options[:select_url]}');");
       s.html_safe
     end
 

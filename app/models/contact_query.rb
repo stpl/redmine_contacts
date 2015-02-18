@@ -22,7 +22,7 @@ class ContactQuery < CrmQuery
   self.queried_class = Contact
 
   self.available_columns = [
-    QueryColumn.new(:name, :sortable => "#{Contact.table_name}.last_name, #{Contact.table_name}.first_name", :caption => :field_contact_full_name),
+    QueryColumn.new(:name, :sortable => lambda {Contact.fields_for_order_statement}, :caption => :field_contact_full_name),
     QueryColumn.new(:first_name, :sortable => "#{Contact.table_name}.first_name"),
     QueryColumn.new(:last_name, :sortable => "#{Contact.table_name}.last_name"),
     QueryColumn.new(:middle_name, :sortable => "#{Contact.table_name}.middle_name", :caption => :field_contact_middle_name),

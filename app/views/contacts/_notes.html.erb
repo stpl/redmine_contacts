@@ -1,14 +1,11 @@
 <%
   extend Redmine::Pagination
-  source_id_cond = @contact.is_company ? Contact.visible.order_by_name.select(:id).find_all_by_company(@contact.first_name) << @contact.id : @contact.id
+  source_id_cond = @contact.is_company ? Contact.visible.where(:company => @contact.first_name).map(&:id) << @contact.id : @contact.id
   @note = Note.new(:created_on => Time.now)
-  @notes_pages, @notes = paginate :notes,
-                                 :per_page => 30,
-                                 :conditions => {:source_id  => source_id_cond,
-                                                 :source_type => 'Contact'},
-                                 :include => [:attachments],
-                                 :order => "#{Note.table_name}.created_on DESC"
 
+  scope = Note.where({:source_id => source_id_cond, :source_type => 'Contact'}).includes(:attachments).order("#{Note.table_name}.created_on DESC")
+  @notes_pages = Redmine::Pagination::Paginator.new(scope.count, 20, params['page'])
+  @notes = scope.limit(20).offset(@notes_pages.offset)
 %>
 <% if authorize_for(:notes, :create) %>
   <div class="add-note hide-when-print">

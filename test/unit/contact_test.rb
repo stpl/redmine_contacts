@@ -84,24 +84,6 @@ class ContactTest < ActiveSupport::TestCase
     contact.save!
 
     assert contact.visible?(user)
-
-
-  end
-
-  def test_create_nonunique
-    contact = Contact.find(1)
-    new_contact = Contact.new(:project => Project.find('ecookbook'),
-      :first_name => contact.first_name,
-      :last_name => contact.last_name,
-      :company => contact.company,
-      :email => contact.email
-    )
-
-    assert !new_contact.valid?, "No error found for nonunique contact"
-    assert_include "First Name has already been taken", new_contact.errors.full_messages
-
-    new_contact.first_name += '_new'
-    assert new_contact.valid?, "Unique contact should be valid"
   end
 
   def test_visible_scope_for_non_member_without_view_contacts_permissions
@@ -159,7 +141,14 @@ class ContactTest < ActiveSupport::TestCase
     assert contacts.any?, "Contacts note visible for user with view_private_contacts permissions"
   end
 
-  def test_visible
+  def test_create_should_send_email_notification
+    ActionMailer::Base.deliveries.clear
+    contact = Contact.new(:first_name => "New contact", :project => Project.find(1))
+
+    with_settings :notified_events => %w(crm_contact_added) do
+      assert contact.save
+    end
+    assert_equal 1, ActionMailer::Base.deliveries.size
   end
 
   def assert_visibility_match(user, contacts)

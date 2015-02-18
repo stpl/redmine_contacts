@@ -399,6 +399,7 @@ div#deal-status span.contextual {float: none; padding-left: 0px;}
 
 .deal_list table.list  tr.deal a {color: #666;}
 .deal_list table.list td.name {text-align: left; white-space: normal}
+.deal_list table.list th.sum.deals-sum { text-align: right; white-space: nowrap; width: 10%;}
 
 /* lost */
 .deal_list tr.odd.status-type-2, .deal_list table.list tbody tr.odd.status-type-2:hover { color: #900; }
@@ -416,6 +417,8 @@ div#deal-status span.contextual {float: none; padding-left: 0px;}
 .deal_list tr.status-type-1 a { color: #005F00; }
 .deal_list tr.odd.status-type-1 td, .deal_list tr.even.status-type-1 td { border-color: #9FCF9F; }
 
+table.deals.index { margin-bottom: 0px;}
+table.deals.index.total { border-top: 0px;}
 
 /**********************************************************************/
 /* DEALS BOARD
@@ -652,16 +655,7 @@ img.thumbnail {
 
 table.sales-funnel td.sales-funnel {text-align: center;}
 table.sales-funnel td.sales-funnel span.tag-label-color { display: block; margin: auto;}
-table.sales-funnel td.sales-funnel.index_1 span.tag-label-color { width: 200px;}
-table.sales-funnel td.sales-funnel.index_2 span.tag-label-color { width: 180px;}
-table.sales-funnel td.sales-funnel.index_3 span.tag-label-color { width: 160px;}
-table.sales-funnel td.sales-funnel.index_4 span.tag-label-color { width: 140px;}
-table.sales-funnel td.sales-funnel.index_5 span.tag-label-color { width: 120px;}
-table.sales-funnel td.sales-funnel.index_6 span.tag-label-color { width: 100px;}
-table.sales-funnel td.sales-funnel.index_7 span.tag-label-color { width: 80px;}
-table.sales-funnel td.sales-funnel.index_8 span.tag-label-color { width: 60px;}
-table.sales-funnel td.sales-funnel.index_9 span.tag-label-color { width: 40px;}
-table.sales-funnel td.sales-funnel.index_10 span.tag-label-color { width: 20px;}
+table.sales-funnel td.sales-funnel.index_0 { width: 50%;}
 table.sales-funnel td.count { text-align: center; }
 table.sales-funnel td.total { text-align: right; }
 table.sales-funnel tr.deal_status_type-1 { background-color: #ECFFF5; }

@@ -12,7 +12,7 @@
 
 
 
-  <% if User.current.allowed_to?(:edit_contacts, @project) %>
+  <% if User.current.allowed_to?(:manage_contact_issue_relations, @project) %>
   <div class="contextual">
   <%= link_to l(:button_add),
         {:controller => 'contacts_issues', :action => 'new', :issue_id => @issue},

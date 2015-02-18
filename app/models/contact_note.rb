@@ -27,9 +27,9 @@ class ContactNote < Note
                             :find_options => {:include => [:contact => :projects], :conditions => {:source_type => 'Contact'} }
 
   scope :visible,
-        lambda {|*args| { :include => [:contact => :projects],
-                          :conditions => Contact.visible_condition(args.shift || User.current, *args) +
-                                         " AND (#{ContactNote.table_name}.source_type = 'Contact')"}}
+        lambda {|*args| includes([:contact => :projects]).
+                        where(Contact.visible_condition(args.shift || User.current, *args) +
+                                         " AND (#{ContactNote.table_name}.source_type = 'Contact')")}
 
   acts_as_attachable :view_permission => :view_contacts,
                      :delete_permission => :edit_contacts

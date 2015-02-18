@@ -161,7 +161,9 @@ class CrmQuery < Query
     if grouped?
       begin
         # Rails3 will raise an (unexpected) RecordNotFound if there's only a nil group value
-        r = objects_scope.group(group_by_statement).count
+        r = objects_scope.
+          joins(joins_for_order_statement(group_by_statement)).
+          group(group_by_statement).count
       rescue ActiveRecord::RecordNotFound
         r = {nil => object_count}
       end

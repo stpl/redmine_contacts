@@ -4,6 +4,33 @@ Redmine CRM plugin - customer relationship management plugin for redmine
 Copyright (C) 2011-2014 Kirill Bezrukov
 http://www.redminecrm.com/
 
+== 2014-11-14 v3.4.4
+
+* Custom fields fixes for Redmine < 2.5
+* REST API for managing contact avatars
+* Deals pipeline list view
+
+== 2014-11-10 v3.4.3
+
+* Deals calendar view
+* Company custom field
+* Permissions for managing contact issue relations
+* Expected revenue field and totals for deals table
+* Serbian translation (Radenko)
+* Fixed bug with create contact select (Modal window)
+* Fixed bug with contacts table columns after quick search
+
+== 2014-10-16 v3.4.2
+
+* Deal custom fields styles
+* Contact name formats
+* Global search by custom values
+* Autocomplete contacts and deals search by tokens
+* Deal add contact select limited by 50 contacts
+* Cross-project deals autocomplete on issue edit form
+* Fixed bug with group by custom field
+* Notifications fixes
+
 == 2014-10-02 v3.4.1
 
 * Seaching contacts by email in global redmine search

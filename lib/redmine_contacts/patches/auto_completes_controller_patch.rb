@@ -52,7 +52,7 @@ module RedmineContacts
             scope = scope.scoped.limit(params[:limit] || 10)
             scope = scope.scoped.companies if params[:is_company]
             scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
-            scope = scope.live_search(q) unless q.blank?
+            q.split(' ').collect{ |search_string| scope = scope.live_search(search_string) } unless q.blank?
             scope = scope.by_project(@project) if @project
             @contacts = scope.sort!{|x, y| x.name <=> y.name }
 
@@ -67,7 +67,8 @@ module RedmineContacts
             scope = scope.includes(:avatar)
             scope = scope.scoped.limit(params[:limit] || 10)
             scope = scope.by_project(@project) if @project
-            @companies = scope.visible.companies.like_by(:first_name, q).sort!{|x, y| x.name <=> y.name }
+            q.split(' ').collect{ |search_string| scope = scope.like_by(:first_name, search_string) } unless q.blank?
+            @companies = scope.visible.companies.sort!{|x, y| x.name <=> y.name }
           end
           render :layout => false, :partial => 'companies'
         end

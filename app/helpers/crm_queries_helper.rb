@@ -21,16 +21,6 @@
 
 module CrmQueriesHelper
 
-  def contacts_list_style
-    list_styles = ['list_excerpt']
-    if params[:contacts_list_style].blank?
-      list_style = list_styles.include?(session[:contacts_list_style]) ? session[:contacts_list_style] : RedmineContacts.default_list_style
-    else
-      list_style = list_styles.include?(params[:contacts_list_style]) ? params[:contacts_list_style] : RedmineContacts.default_list_style
-    end
-    session[:contacts_list_style] = list_style
-  end
-
   def retrieve_crm_query(object_type)
     query_class = Object.const_get("#{object_type.camelcase}Query")
     if !params[:query_id].blank?
@@ -53,6 +43,20 @@ module CrmQueriesHelper
       @query ||= query_class.new(:name => "_", :filters => session["#{object_type}_query".to_sym][:filters], :group_by => session["#{object_type}_query".to_sym][:group_by], :column_names => session["#{object_type}_query".to_sym][:column_names])
       @query.project = @project
     end
+  end
+
+
+  def retrieve_crm_calendar(options = {})
+    if params[:year] and params[:year].to_i > 1900
+      @year = params[:year].to_i
+      if params[:month] and params[:month].to_i > 0 and params[:month].to_i < 13
+        @month = params[:month].to_i
+      end
+    end
+    @year ||= Date.today.year
+    @month ||= Date.today.month
+
+    @calendar = RedmineContacts::Helpers::CrmCalendar.new(Date.civil(@year, @month, 1), options)
   end
 
   def sidebar_crm_queries(query_class)

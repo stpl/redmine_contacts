@@ -70,8 +70,8 @@ class ContactsController < ApplicationController
         @limit = per_page_option
       end
       @contacts_count = @query.object_count
-      @contacts_pages = Paginator.new(self, @contacts_count, @limit, params['page'])
-      @offset ||= @contacts_pages.current.offset
+      @contacts_pages = Paginator.new(@contacts_count, @limit, params['page'])
+      @offset ||= @contacts_pages.offset
       @contact_count_by_group = @query.object_count_by_group
       @contacts = @query.results_scope(
         :include => [:avatar],
@@ -123,6 +123,7 @@ class ContactsController < ApplicationController
 
   def update
     @contact.safe_attributes = params[:contact]
+    @contact.save_attachments(params[:attachments] || (params[:contact] && params[:contact][:uploads]))
     if @contact.save
       flash[:notice] = l(:notice_successful_update)
       attach_avatar
@@ -159,6 +160,7 @@ class ContactsController < ApplicationController
   def create
     @contact = Contact.new(:project => @project, :author => User.current)
     @contact.safe_attributes = params[:contact]
+    @contact.save_attachments(params[:attachments] || (params[:contact] && params[:contact][:uploads]))
     if @contact.save
       flash[:notice] = l(:notice_successful_create)
       attach_avatar
@@ -192,13 +194,9 @@ class ContactsController < ApplicationController
     cond << " and (#{Note.table_name}.author_id = #{params[:note_author_id]})" if !params[:note_author_id].blank?
     cond << " and (#{Note.table_name}.type_id = #{params[:type_id]})" if !params[:type_id].blank?
 
-    @notes_pages, @notes = paginate :notes,
-                                    :per_page => 20,
-                                    :joins => joins,
-                                    :conditions => cond,
-                                    :order => "#{Note.table_name}.created_on DESC"
-    @notes.compact!
-
+    scope = Note.joins(joins).where(cond).order("#{Note.table_name}.created_on DESC")
+    @notes_pages = Paginator.new(scope.count, 20, params['page'])
+    @notes = scope.limit(20).offset(@notes_pages.offset)
 
     respond_to do |format|
       format.html { render :partial => "notes/notes_list", :layout => false, :locals => {:notes => @notes, :notes_pages => @notes_pages} if request.xhr?}
@@ -238,7 +236,7 @@ private
     scope = @contact.issues
     scope = scope.open unless RedmineContacts.settings[:show_closed_issues]
     @contact_issues_count = scope.visible.count
-    @contact_issues = scope.visible.find(:all, :order => "#{Issue.table_name}.status_id, #{Issue.table_name}.updated_on DESC", :limit => 10)
+    @contact_issues = scope.visible.order("#{Issue.table_name}.status_id, #{Issue.table_name}.updated_on DESC").limit(10)
   end
 
   def attach_avatar
@@ -255,9 +253,9 @@ private
     scope = scope.scoped(:conditions => ["#{Project.table_name}.id = ?", @project.id]) if @project
     scope = scope.includes(:attachments)
 
-    @last_notes = scope.visible.find(:all,
-                                     :limit => count,
-                                     :order => "#{ContactNote.table_name}.created_on DESC")
+    @last_notes = scope.visible.
+      limit(count).
+      order("#{ContactNote.table_name}.created_on DESC")
   end
 
   def find_contact

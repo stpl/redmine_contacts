@@ -29,7 +29,7 @@ class ContactsIssuesController < ApplicationController
   helper :contacts
 
   def create_issue
-    deny_access unless @contact.editable? || User.current.allowed_to?(:add_issues, @project)
+    deny_access unless User.current.allowed_to?(:manage_contact_issue_relations, @project) || User.current.allowed_to?(:add_issues, @project)
     issue = Issue.new
     issue.project = @project
     issue.author = User.current
@@ -85,7 +85,10 @@ class ContactsIssuesController < ApplicationController
   end
 
   def autocomplete_for_contact
-    @contacts = Contact.visible.includes(:avatar).order_by_name.live_search(params[:q]).by_project(params[:cross_project_contacts] == "1" ? nil : @project).limit(100)
+    q = params[:q].to_s
+    scope = Contact.scoped({})
+    q.split(' ').collect{ |search_string| scope = scope.live_search(search_string) } unless q.blank?
+    @contacts = scope.visible.includes(:avatar).order(Contact.fields_for_order_statement).by_project(params[:cross_project_contacts] == "1" ? nil : @project).limit(100)
     if @issue
       @contacts -= @issue.contacts
     end

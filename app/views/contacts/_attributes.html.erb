@@ -1,4 +1,4 @@
-<div id="attributes">
+<div id="attributes" class="attributes">
 <div class="contextual">
 	 <%- if ContactsSetting.vcard? -%>
     <%= link_to 'vCard', contact_path(@contact, :format => :vcf) %>
@@ -6,7 +6,7 @@
 </div>
 <h3><%= if !@contact.is_company then l(:label_contact) else l(:label_crm_company) end %></h3>
 
-<table class="contact sidebar attributes vcard">
+<table class="contact sidebar vcard">
   <%= call_hook(:view_contacts_sidebar_attributes_top) %>
 	<tr>
 		<th class = "name"><%= l(:field_contact_name) %>:</th><td class="name fn <%= "org" if @contact.is_company %>"><%= h @contact.name(:firstname_middlename_lastname) %></td>

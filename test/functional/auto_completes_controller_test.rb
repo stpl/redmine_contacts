@@ -33,7 +33,7 @@ class AutoCompletesControllerTest < ActionController::TestCase
            :workflows,
            :journals, :journal_details
 
-    ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
+  ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
                             [:contacts,
                              :contacts_projects,
                              :contacts_issues,

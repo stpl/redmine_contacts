@@ -22,9 +22,9 @@ class Address < ActiveRecord::Base
 
   belongs_to :addressable, :polymorphic => true
 
-  scope :business, :conditions => {:address_type => "business"}
-  scope :billing,  :conditions => {:address_type => "billing"}
-  scope :shipping, :conditions => {:address_type => "shipping"}
+  scope :business, lambda { where(:address_type => "business") }
+  scope :billing, lambda { where(:address_type => "billing") }
+  scope :shipping, lambda { where(:address_type => "shipping") }
 
   before_save :populate_full_address
 

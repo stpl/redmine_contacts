@@ -598,3 +598,12 @@ en:
   label_crm_contact_country: Contact's country
   label_crm_contact_city: Contact's city
   label_attribute_of_deals: "Deals's %{name}"
+
+  #3.4.2
+  permission_manage_public_deals_queries: Manage deal public queries
+  permission_save_deals_queries: Save deal queries
+  permission_manage_contact_issue_relations: Manage issue relations
+
+  #3.4.4
+  label_crm_pipeline: Pipeline
+  text_crm_no_deal_statuses_in_project: No deal statuses in project

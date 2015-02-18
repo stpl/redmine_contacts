@@ -29,7 +29,7 @@ module ActsAsViewable
         self.viewable_options = {}
         viewable_options[:info] = options.delete(:info) || "info".to_sym
 
-        has_many :views, :class_name => "RecentlyViewed", :as => :viewed, :dependent => :delete_all, :order => "#{RecentlyViewed.table_name}.updated_at DESC"
+        has_many :views, :order => "#{RecentlyViewed.table_name}.updated_at DESC", :class_name => "RecentlyViewed", :as => :viewed, :dependent => :delete_all
 
         # attr_reader :info
 
