@@ -1,8 +1,20 @@
 == Redmine CRM plugin changelog
 
 Redmine CRM plugin - customer relationship management plugin for redmine
-Copyright (C) 2011-2014 Kirill Bezrukov
+Copyright (C) 2011-2015 Kirill Bezrukov
 http://www.redminecrm.com/
+
+== 2015-03-19 v3.4.5
+
+* List optional filter for contact on issues list
+* French translation update (Olivier Houdas)
+* Swedish translation update (Khedron Wilk)
+* Fixed recursion in contact creation
+* redirect_on_sucess param for REST API contact creation
+* Portuguese Brazilian Translation update (Leandro Gehlen)
+* Spanish Translation update (Luis Blasco)
+* Deal probability filter added (Jacek Dyło)
+* Fixed bug with deal category deletion (Jacek Dyło)
 
 == 2014-11-14 v3.4.4
 

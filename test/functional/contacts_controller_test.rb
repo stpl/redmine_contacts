@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2014 Kirill Bezrukov
+# Copyright (C) 2011-2015 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -187,6 +187,7 @@ class ContactsControllerTest < ActionController::TestCase
                                 :first_name => "Created"}
 
     end
+
     assert_redirected_to :controller => 'contacts', :action => 'show', :id => Contact.last.id, :project_id => Contact.last.project
 
     contact = Contact.find(:first, :conditions => {:first_name => "Created", :last_name => "New", :middle_name => "Ivanovich"})
@@ -306,5 +307,11 @@ class ContactsControllerTest < ActionController::TestCase
     assert_response :success
     assert_template '_notes_list'
     assert_select 'table.note_data div.note.content.preview', /Note 2/
+  end
+
+  private
+
+  def crm_query_params
+    {:set_filter => "1", :project_id => "ecookbook"}
   end
 end

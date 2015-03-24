@@ -289,6 +289,8 @@ table.list td.phones {
 }
 
 table.list td.address,
+table.list td.street1,
+table.list td.street2,
 table.list td.background {
   text-align: left;
 }

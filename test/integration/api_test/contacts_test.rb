@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2014 Kirill Bezrukov
+# Copyright (C) 2011-2015 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -94,6 +94,19 @@ class Redmine::ApiTest::ContactsTest < ActionController::IntegrationTest
     assert_response :created
     assert_equal 'application/xml', @response.content_type
     assert_tag 'contact', :child => {:tag => 'id', :content => contact.id.to_s}
+  end
+
+  def test_post_contacts_xml_redirect
+    Redmine::ApiTest::Base.should_allow_api_authentication(:post,
+                                    '/contacts.xml',
+                                    {:contact => {:project_id => 1, :first_name => 'API test'}},
+                                    {:success_code => :created})
+
+    assert_difference('Contact.count') do
+      post '/contacts.xml', {:contact => {:project_id => 1, :first_name => 'API test'}, :redirect_on_success => 'http://ya.ru'}, credentials('admin')
+    end
+
+    assert_redirected_to 'http://ya.ru'
   end
 
   # Issue 6 is on a private project

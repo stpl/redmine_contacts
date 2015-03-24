@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2014 Kirill Bezrukov
+# Copyright (C) 2011-2015 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -227,6 +227,7 @@ class Contact < ActiveRecord::Base
     scope = scope.joins(joins.flatten)
     scope = scope.group("#{ActsAsTaggableOn::Tag.table_name}.id, #{ActsAsTaggableOn::Tag.table_name}.name HAVING COUNT(*) > 0")
     scope = scope.limit(limit) if limit
+    scope = scope.order("#{ActsAsTaggableOn::Tag.table_name}.name")
     scope
   end
 
@@ -245,11 +246,12 @@ class Contact < ActiveRecord::Base
   alias_method :employees, :company_contacts
 
   def redmine_user
-    @redmine_user ||= User.find(:first, :conditions => {:mail => emails}) unless self.email.blank?
+    @redmine_user ||= User.where(:mail => emails).first unless self.email.blank?
   end
 
   def contact_company
-    @contact_company ||= Contact.find_by_first_name(self.company) unless self.company.blank?
+    @contact_company ||= Contact.where(:first_name => self.company, :is_company => true).
+      where("#{Contact.table_name}.id <> #{self.id}").first unless self.company.blank?
   end
 
   def notes_attachments
@@ -323,7 +325,7 @@ class Contact < ActiveRecord::Base
     cond = "(1 = 0)"
     emails = emails.map{|e| e.downcase }
     emails.each do |mail|
-      cond << " OR (LOWER(#{Contact.table_name}.email) LIKE '%#{mail.gsub("'", "").gsub("\"", "")}%')"
+      cond << " OR (LOWER(#{Contact.table_name}.email) LIKE LOWER('%#{mail.gsub("'", "").gsub("\"", "")}%'))"
     end
     contacts = Contact.where(cond)
     contacts.select{|c| (c.emails.map{|e| e.downcase } & emails).any? }

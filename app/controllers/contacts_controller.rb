@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2014 Kirill Bezrukov
+# Copyright (C) 2011-2015 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -167,7 +167,7 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to (params[:continue] ?  {:action => "new", :project_id => @project} : {:action => "show", :project_id => @project, :id => @contact} )}
         format.js
-        format.api  { render :action => 'show', :status => :created, :location => contact_url(@contact) }
+        format.api { redirect_on_create(params) }
       end
     else
       respond_to do |format|
@@ -340,6 +340,14 @@ private
       @contact.deletable? ? true : deny_access
     else
       deny_access
+    end
+  end
+
+  def redirect_on_create(options)
+    if options[:redirect_on_success].to_s.match('^(http|https):\/\/')
+      redirect_to options[:redirect_on_success].to_s
+    else
+      render :action => 'show', :status => :created, :location => contact_url(@contact)
     end
   end
 

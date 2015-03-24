@@ -575,3 +575,33 @@ pt-BR:
   label_crm_default_currency: Moeda padrão
   label_crm_thousands_delimiter: Delimitador de milhares
   label_crm_decimal_separator: Separador decimal
+
+
+  #3.2.10
+  label_crm_add_contact_plural: Adicionar contatos
+  label_crm_search_for_contact: Buscar pelo contato
+  label_crm_major_currencies: Principais moedas
+
+  #3.2.11
+  label_crm_post_address_format: Formato do endereço
+  label_crm_post_address_format_macros: "Macros do formato do endereço: %{macros}"
+
+  #3.2.14
+  label_crm_last_year: Último ano
+
+  #3.2.15
+  permission_export_contacts: Exportar contatos e acordos
+
+  #3.4.0
+  label_crm_deal_contact: Acordos do contato
+
+  #3.4.1
+  label_crm_default_country: País padrão
+  label_attribute_of_contact: "Contato %{name}"
+  label_crm_contact_country: País do contato
+  label_crm_contact_city: Cidade do contato
+  label_attribute_of_deals: "Acordo %{name}"
+
+  #3.4.2
+  permission_manage_public_deals_queries: Administrar buscas de acordos públicos
+  permission_save_deals_queries: Salvar buscas de acordos

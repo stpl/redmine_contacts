@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2014 Kirill Bezrukov
+# Copyright (C) 2011-2015 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 require 'redmine'
 
-CONTACTS_VERSION_NUMBER = '3.4.4'
+CONTACTS_VERSION_NUMBER = '3.4.5'
 CONTACTS_VERSION_TYPE = "Light version"
 
 Redmine::Plugin.register :redmine_contacts do

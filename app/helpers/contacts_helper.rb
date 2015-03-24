@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2014 Kirill Bezrukov
+# Copyright (C) 2011-2015 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -26,6 +26,15 @@ module ContactsHelper
     contact_tabs << {:name => 'notes', :partial => 'contacts/notes', :label => l(:label_crm_note_plural)} if contact.visible?
     contact_tabs << {:name => 'contacts', :partial => 'company_contacts', :label => l(:label_contact_plural) + (contact.company_contacts.visible.count > 0 ? " (#{contact.company_contacts.count})" : "")} if contact.is_company?
     contact_tabs
+  end
+
+  def settings_contacts_tabs
+    ret = [
+      {:name => 'general', :partial => 'settings/contacts/contacts_general', :label => :label_general},
+      {:name => 'money', :partial => 'settings/contacts/money', :label => :label_crm_money_settings},
+    ]
+    ret.push({:name => 'hidden', :partial => 'settings/contacts/contacts_hidden', :label => :label_crm_contacts_hidden}) if params[:hidden]
+    ret
   end
 
   def collection_for_visibility_select

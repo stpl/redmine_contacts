@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2014 Kirill Bezrukov
+# Copyright (C) 2011-2015 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -39,6 +39,9 @@ module RedmineContacts
         when '7_days'
           from = Date.today - 7
           to = Date.today
+        when 'last_7_days'
+          from = Date.today - 14
+          to = from + 7
         when 'current_month'
           from = Date.civil(Date.today.year, Date.today.month, 1)
           to = (from >> 1) - 1

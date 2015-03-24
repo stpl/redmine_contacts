@@ -542,7 +542,6 @@ fr:
     VI: Îles Vierges américaines
     UG: Ouganda
     UA: Ukraine
-    SU: Union des Républiques socialistes soviétiques
     AE: Émirats arabes unis
     GB: Royaume-Uni
     US: États-Unis
@@ -585,4 +584,26 @@ fr:
   label_crm_post_address_format_macros: "Macros de formats d'adresses : %{macros}"
 
   #3.2.14
-  label_crm_last_year: L'année dernière
+  label_crm_last_year: label_crm_last_year
+
+  #3.2.15
+  permission_export_contacts: Exporter les contacts et les affaires
+
+  #3.4.0
+  label_crm_deal_contact: Contact de l'affaire
+
+  #3.4.1
+  label_crm_default_country: Pays par défaut
+  label_attribute_of_contact: "Contacts de %{name}"
+  label_crm_contact_country: Pays du contact
+  label_crm_contact_city: Ville du contact
+  label_attribute_of_deals: "Affaires de %{name}"
+
+  #3.4.2
+  permission_manage_public_deals_queries: Gérer les requêtes publiques pour l'affaire
+  permission_save_deals_queries: Enregistrer les requêtes de l'affaire
+  permission_manage_contact_issue_relations: Gérer les relations de demandes
+
+  #3.4.4
+  label_crm_pipeline: Pipeline
+  text_crm_no_deal_statuses_in_project: Aucun état d'affaires dans le projet

@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2014 Kirill Bezrukov
+# Copyright (C) 2011-2015 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -30,11 +30,13 @@ class ContactQuery < CrmQuery
     QueryColumn.new(:company, :sortable => "#{Contact.table_name}.company", :groupable => "#{Contact.table_name}.company", :caption => :field_contact_company, :groupable => true),
     QueryColumn.new(:phones, :sortable => "#{Contact.table_name}.phone", :caption => :field_contact_phone),
     QueryColumn.new(:emails, :sortable => "#{Contact.table_name}.email", :caption => :field_contact_email),
+    QueryColumn.new(:address, :sortable => "#{Address.table_name}.full_address", :caption => :label_crm_address),
+    QueryColumn.new(:street1, :sortable => "#{Address.table_name}.street1", :caption => :label_crm_street1),
+    QueryColumn.new(:street2, :sortable => "#{Address.table_name}.street2", :caption => :label_crm_street2),
     QueryColumn.new(:city, :sortable => "#{Address.table_name}.city", :groupable => "#{Address.table_name}.city", :caption => :label_crm_city),
     QueryColumn.new(:region, :sortable => "#{Address.table_name}.region", :caption => :label_crm_region),
     QueryColumn.new(:postcode, :sortable => "#{Address.table_name}.postcode", :caption => :label_crm_postcode),
     QueryColumn.new(:country, :sortable => "#{Address.table_name}.country_code", :groupable => "#{Address.table_name}.country_code", :caption => :label_crm_country),
-    QueryColumn.new(:address, :sortable => "#{Address.table_name}.full_address", :caption => :label_crm_address),
     QueryColumn.new(:tags),
     QueryColumn.new(:created_on, :sortable => "#{Contact.table_name}.created_on"),
     QueryColumn.new(:updated_on, :sortable => "#{Contact.table_name}.updated_on"),

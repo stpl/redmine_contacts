@@ -584,5 +584,31 @@ es:
   label_crm_search_for_contact: Buscar contacto
   label_crm_major_currencies: Monedas principales
 
+  #3.2.11
+  label_crm_post_address_format: Formato de la dirección postal
+  label_crm_post_address_format_macros: "Macros del formato de la dirección: %{macros}"
+
   #3.2.14
   label_crm_last_year: Último año
+
+  #3.2.15
+  permission_export_contacts: Exportar contactos y acuerdos
+
+  #3.4.0
+  label_crm_deal_contact: Contacto del acuerdo
+
+  #3.4.1
+  label_crm_default_country: País por defecto
+  label_attribute_of_contact: "%{name} del contacto"
+  label_crm_contact_country: País del contacto
+  label_crm_contact_city: Ciudad del contacto
+  label_attribute_of_deals: "%{name} del acuerdo"
+
+  #3.4.2
+  permission_manage_public_deals_queries: Gestionar filtros públicos de los acuerdos
+  permission_save_deals_queries: Guardar filtros de los acuerdos
+  permission_manage_contact_issue_relations: Gestionar relaciones de las tareas de los contactos
+
+  #3.4.4
+  label_crm_pipeline: Pipeline
+  text_crm_no_deal_statuses_in_project: No hay estados de los acuerdos en el proyecto
