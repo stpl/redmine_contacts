@@ -31,7 +31,7 @@ class CreateAddresses < ActiveRecord::Migration
 
       t.references :addressable, :polymorphic => true
 
-      t.timestamps
+      t.timestamps :null => false
     end
     add_index :addresses, [ :addressable_id, :addressable_type ]
 

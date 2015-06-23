@@ -25,6 +25,8 @@ class ContactsSetting < ActiveRecord::Base
 
   belongs_to :project
 
+  attr_accessible :name, :value, :project_id
+
   cattr_accessor :settings
   acts_as_attachable
 

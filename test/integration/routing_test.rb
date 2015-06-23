@@ -21,7 +21,7 @@
 
 require File.expand_path('../../test_helper', __FILE__)
 
-class RoutingTest < ActionController::IntegrationTest
+class RoutingTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmine::ApiTest::Base : ActionController::IntegrationTest
 
   test "contacts" do
     # REST actions

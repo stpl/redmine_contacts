@@ -9,7 +9,7 @@
 <tbody>
   <tr>
     <td><%= l(:label_crm_contacts_created) %></td>
-    <td><%= Contact.count(:conditions => {:author_id => @user.id, :created_on => from..to}) %></td>
+    <td><%= Contact.where(:author_id => @user.id, :created_on => from..to).count %></td>
   </tr>
 </tbody>
 </table>

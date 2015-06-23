@@ -19,9 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-require File.dirname(__FILE__) + '/../../test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
 
-class Redmine::ApiTest::NotesTest < ActionController::IntegrationTest
+class Redmine::ApiTest::NotesTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmine::ApiTest::Base : ActionController::IntegrationTest
   fixtures :projects,
            :users,
            :roles,
@@ -46,15 +46,14 @@ class Redmine::ApiTest::NotesTest < ActionController::IntegrationTest
            :journal_details,
            :queries
 
-    ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../../fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :deals,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries])
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
 
   def setup
     Setting.rest_api_enabled = '1'
@@ -63,10 +62,13 @@ class Redmine::ApiTest::NotesTest < ActionController::IntegrationTest
 
   test "POST /contacts/:contact_id/projects.xml" do
     parameters = {:project => {:id => 2}}
-    Redmine::ApiTest::Base.should_allow_api_authentication(:post,
-                                    '/contacts/1/projects.xml',
-                                    parameters,
-                                    {:success_code => :success})
+
+    if ActiveRecord::VERSION::MAJOR < 4
+      Redmine::ApiTest::Base.should_allow_api_authentication(:post,
+                                      '/contacts/1/projects.xml',
+                                      parameters,
+                                      {:success_code => :success})
+    end
 
     post '/contacts/1/projects.xml', parameters, credentials('admin')
     assert_response :success
@@ -77,10 +79,13 @@ class Redmine::ApiTest::NotesTest < ActionController::IntegrationTest
     contact = Contact.find(1)
     contact.projects << Project.find(2)
     contact.save
-    Redmine::ApiTest::Base.should_allow_api_authentication(:delete,
-                                    '/contacts/1/projects/2.xml',
-                                    {},
-                                    {:success_code => :success})
+
+    if ActiveRecord::VERSION::MAJOR < 4
+      Redmine::ApiTest::Base.should_allow_api_authentication(:delete,
+                                      '/contacts/1/projects/2.xml',
+                                      {},
+                                      {:success_code => :success})
+    end
 
     delete '/contacts/1/projects/2.xml', {}, credentials('admin')
     assert_response :success

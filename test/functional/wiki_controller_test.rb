@@ -49,16 +49,14 @@ class WikiControllerTest < ActionController::TestCase
            :journal_details,
            :queries
 
-    ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :deals,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries])
-
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
 
   def setup
     RedmineContacts::TestCase.prepare

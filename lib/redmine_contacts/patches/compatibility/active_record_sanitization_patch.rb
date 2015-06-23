@@ -18,42 +18,20 @@
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
 module RedmineContacts
-  module Acts
-    module Priceable
+  module Patches
+    module ActiveRecordSanitizationPatch
       def self.included(base)
-        base.extend ClassMethods
-      end
 
-      module ClassMethods
-        def acts_as_priceable(*args)
-          priceable_options = args
-          priceable_options << :price if priceable_options.empty?
-          priceable_methods = ""
-          priceable_options.each do |priceable_attr|
-            priceable_methods << %(
-              def #{priceable_attr.to_s}_to_s
-                object_price(self, :#{priceable_attr}) if self.respond_to?(:#{priceable_attr})
-              end
-            )
+        base.class_eval do
+          def quote_value(value, column = nil)
+            connection.quote(value, column)
           end
-
-          class_eval <<-EOV
-            include RedmineCrm::MoneyHelper
-            include RedmineContacts::Acts::Priceable::InstanceMethods
-
-            #{priceable_methods}
-          EOV
-
         end
       end
-
-      module InstanceMethods
-        def self.included(base)
-          base.extend ClassMethods
-        end
-
-      end
-
     end
   end
+end
+
+unless ActiveRecord::Sanitization::ClassMethods.included_modules.include?(RedmineContacts::Patches::ActiveRecordSanitizationPatch)
+  ActiveRecord::Sanitization::ClassMethods.send(:include, RedmineContacts::Patches::ActiveRecordSanitizationPatch)
 end

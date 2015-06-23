@@ -66,6 +66,9 @@
 
 
 <% content_for :sidebar do %>
+      
+      <%= render :partial => 'upgrade_to_pro' %>
+     
     <%= render :partial => 'common/sidebar' %>
     <%= render :partial => 'tags_cloud', :object => @tags %>
     <%= render :partial => 'notes/last_notes', :object => @last_notes %>

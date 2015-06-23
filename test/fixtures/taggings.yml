@@ -3,22 +3,28 @@ tagging_001:
   tag_id: 1
   taggable_id: 1
   taggable_type: Contact
-  context: tags
+  # context: tags
 
 tagging_002:
   tag_id: 2
   taggable_id: 2
   taggable_type: Contact
-  context: tags
+  # context: tags
 
 tagging_003:
   tag_id: 1
   taggable_id: 3
   taggable_type: Contact
-  context: tags
+  # context: tags
 
 tagging_004:
   tag_id: 2
+  taggable_id: 4
+  taggable_type: Contact
+  # context: tags
+
+tagging_005:
+  tag_id: 2
   taggable_id: 3
   taggable_type: Contact
-  context: tags
+  # context: tags

@@ -24,6 +24,10 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class AddressTest < ActiveSupport::TestCase
 
+  def setup
+    Setting.plugin_redmine_contacts["post_address_format"] = nil
+  end
+
   def test_should_generate_full_address
     address = Address.new
     address.street1 = "300 Boylston Ave E"

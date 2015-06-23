@@ -50,49 +50,57 @@ class RedmineContacts::TestCase
     (a1 - a2) - (a2 - a1) == []
   end
 
+  def self.create_fixtures(fixtures_directory, table_names, class_names = {})
+    if ActiveRecord::VERSION::MAJOR >= 4
+      ActiveRecord::FixtureSet.create_fixtures(fixtures_directory, table_names, class_names = {})
+    else
+      ActiveRecord::Fixtures.create_fixtures(fixtures_directory, table_names, class_names = {})
+    end
+  end
+
   def self.prepare
     # User 2 Manager (role 1) in project 1, email jsmith@somenet.foo
     # User 3 Developer (role 2) in project 1
 
 
-    Role.find(1, 2, 3, 4).each do |r|
+    Role.where(:id => [1, 2, 3, 4]).each do |r|
       r.permissions << :view_contacts
       r.save
     end
 
-    Role.find(1, 2).each do |r|
+    Role.where(:id => [1, 2]).each do |r|
       #user_2, user_3
       r.permissions << :add_contacts
       r.save
     end
 
-    Array(Role.find(1)).each do |r|
+    Role.where(:id => 1).each do |r|
       #user_2
       r.permissions << :add_deals
       r.permissions << :save_contacts_queries
       r.save
     end
 
-    Role.find(1, 2).each do |r|
+    Role.where(:id => [1, 2]).each do |r|
       r.permissions << :edit_contacts
       r.save
     end
-    Role.find(1, 2, 3).each do |r|
+    Role.where(:id => [1, 2, 3]).each do |r|
       r.permissions << :view_deals
       r.save
     end
 
-    Role.find(2) do |r|
+    Role.where(:id => 2).each do |r|
       r.permissions << :edit_deals
       r.save
     end
 
-    Role.find(1, 2).each do |r|
+    Role.where(:id => [1, 2]).each do |r|
       r.permissions << :manage_public_contacts_queries
       r.save
     end
 
-    Project.find(1, 2, 3, 4, 5).each do |project|
+    Project.where(:id => [1, 2, 3, 4, 5]).each do |project|
       EnabledModule.create(:project => project, :name => 'contacts')
       EnabledModule.create(:project => project, :name => 'deals')
     end

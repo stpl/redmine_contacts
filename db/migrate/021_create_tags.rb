@@ -18,31 +18,15 @@
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
 class CreateTags < ActiveRecord::Migration
+  require 'redmine_crm/rcrm_acts_as_taggable'
+
   def self.up
-    unless ActsAsTaggableOn::Tag.table_exists?
-      create_table :tags do |t|
-        t.column :name, :string
-      end
-      add_index :tags, :name
-    end
-
-    unless ActsAsTaggableOn::Tagging.table_exists?
-      create_table :taggings do |t|
-        t.references :tag
-        t.references :taggable, :polymorphic => true
-        t.references :tagger, :polymorphic => true
-        t.string :context, :limit => 128
-        t.datetime :created_at
-      end
-
-      add_index :taggings, :tag_id
-      add_index :taggings, [:taggable_id, :taggable_type, :context]
-    end
-
+    # unless table_exists?(:viewings)
+      ActiveRecord::Base.create_taggable_table
+    # end
   end
 
-  def self.down
-    drop_table :taggings
-    drop_table :tags
+  def self.down    
+    ActiveRecord::Base.drop_taggable_table
   end
 end

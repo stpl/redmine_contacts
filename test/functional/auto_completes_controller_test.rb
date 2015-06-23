@@ -32,16 +32,17 @@ class AutoCompletesControllerTest < ActionController::TestCase
            :enabled_modules,
            :workflows,
            :journals, :journal_details
+  fixtures :email_addresses if ActiveRecord::VERSION::MAJOR >= 4
 
-  ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :deals,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries])
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
+
   def setup
     RedmineContacts::TestCase.prepare
 

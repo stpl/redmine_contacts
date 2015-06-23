@@ -48,16 +48,15 @@ class ContactsProjectSettingTest < ActiveSupport::TestCase
            :journal_details,
            :queries
 
-    ActiveRecord::Fixtures.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :contacts_settings,
-                             :deals,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries])
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :contacts_settings,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
 
   def setup
     Setting.plugin_redmine_contacts["post_address_format"] = nil

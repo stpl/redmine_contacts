@@ -33,7 +33,7 @@ class ContactsIssuesController < ApplicationController
     issue = Issue.new
     issue.project = @project
     issue.author = User.current
-    issue.status = IssueStatus.default
+    issue.status = IssueStatus.default if ActiveRecord::VERSION::MAJOR < 4
     issue.start_date ||= Date.today
     issue.contacts << @contact
     issue.safe_attributes = params[:issue] if params[:issue]
@@ -75,7 +75,7 @@ class ContactsIssuesController < ApplicationController
   end
 
   def close
-    @issue.status = IssueStatus.find(:first, :conditions =>  { :is_closed => true })
+    @issue.status = IssueStatus.where(:is_closed => true).first
     @issue.save
     respond_to do |format|
       format.js
@@ -86,7 +86,7 @@ class ContactsIssuesController < ApplicationController
 
   def autocomplete_for_contact
     q = params[:q].to_s
-    scope = Contact.scoped({})
+    scope = Contact.where({})
     q.split(' ').collect{ |search_string| scope = scope.live_search(search_string) } unless q.blank?
     @contacts = scope.visible.includes(:avatar).order(Contact.fields_for_order_statement).by_project(params[:cross_project_contacts] == "1" ? nil : @project).limit(100)
     if @issue

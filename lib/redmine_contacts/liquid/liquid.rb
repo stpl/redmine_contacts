@@ -25,7 +25,7 @@ require "redmine_contacts/liquid/drops/addresses_drop"
 module RedmineContacts
   module Liquid
     module Filters
-      include RedmineContacts::MoneyHelper
+      include RedmineCrm::MoneyHelper
 
       def underscore(input)
         input.to_s.gsub(' ', '_').gsub('/', '_').underscore

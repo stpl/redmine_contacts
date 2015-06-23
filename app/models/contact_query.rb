@@ -22,12 +22,13 @@ class ContactQuery < CrmQuery
   self.queried_class = Contact
 
   self.available_columns = [
+    QueryColumn.new(:id, :sortable => "#{Contact.table_name}.id", :default_order => 'desc', :caption => '#'),
     QueryColumn.new(:name, :sortable => lambda {Contact.fields_for_order_statement}, :caption => :field_contact_full_name),
     QueryColumn.new(:first_name, :sortable => "#{Contact.table_name}.first_name"),
     QueryColumn.new(:last_name, :sortable => "#{Contact.table_name}.last_name"),
     QueryColumn.new(:middle_name, :sortable => "#{Contact.table_name}.middle_name", :caption => :field_contact_middle_name),
     QueryColumn.new(:job_title, :sortable => "#{Contact.table_name}.job_title", :caption => :field_contact_job_title, :groupable => true),
-    QueryColumn.new(:company, :sortable => "#{Contact.table_name}.company", :groupable => "#{Contact.table_name}.company", :caption => :field_contact_company, :groupable => true),
+    QueryColumn.new(:company, :sortable => "#{Contact.table_name}.company", :groupable => "#{Contact.table_name}.company", :caption => :field_contact_company),
     QueryColumn.new(:phones, :sortable => "#{Contact.table_name}.phone", :caption => :field_contact_phone),
     QueryColumn.new(:emails, :sortable => "#{Contact.table_name}.email", :caption => :field_contact_email),
     QueryColumn.new(:address, :sortable => "#{Address.table_name}.full_address", :caption => :label_crm_address),
@@ -61,7 +62,7 @@ class ContactQuery < CrmQuery
   end
 
   def default_columns_names
-    @default_columns_names ||= [:name, :job_title, :company, :phone, :email, :address]
+    @default_columns_names ||= [:id, :name, :job_title, :company, :phone, :email, :address]
   end
 
   def sql_for_tags_field(field, operator, value)
@@ -80,9 +81,7 @@ class ContactQuery < CrmQuery
   end
 
   def query_includes
-    includes = [:address, :projects]
-    includes << :assigned_to if self.filters["assigned_to_id"] || (group_by_column && [:assigned_to].include?(group_by_column.name))
-    includes
+    [:address, :projects, :assigned_to]
   end
 
 end

@@ -38,6 +38,18 @@ module RedmineContacts
             contact_tag(list_object)
           elsif value.is_a?(Contact)
             contact_tag(value)
+          elsif column.name == :contacts
+            contacts_span = []
+            value.each do |contact|
+              contacts_span << contact_tag(contact)
+            end
+            contacts_span.join(", ")
+          elsif column.name == :tags
+            contact_tags = []
+            value.each do |tag|
+              contact_tags << tag.name
+            end
+            contact_tags.join(", ")
           else
             column_value_without_contacts(column, list_object, value)
           end

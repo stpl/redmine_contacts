@@ -24,10 +24,14 @@ module RedmineContacts
   module Patches
 
     module AttachmentsControllerPatch
+      def self.included(base)
+        base.send(:include, InstanceMethods)
+      end
 
       module InstanceMethods
 
         def contacts_thumbnail
+          find_attachment
           size = params[:size].to_i
           size = 64 unless size > 0
           if @attachment.readable? && @attachment.thumbnailable?
@@ -37,7 +41,6 @@ module RedmineContacts
             else
               thumbnail = @attachment.diskfile
             end
-
             if stale?(:etag => @attachment.digest)
               send_file thumbnail, :filename => (request.env['HTTP_USER_AGENT'] =~ %r{MSIE} ? ERB::Util.url_encode(@attachment.filename) : @attachment.filename),
                                               :type => detect_content_type(@attachment),
@@ -52,10 +55,17 @@ module RedmineContacts
           return nil
         end
 
-      end
+        private
 
-      def self.included(base) # :nodoc:
-        base.send(:include, InstanceMethods)
+        def find_attachment
+          @attachment = Attachment.find(params[:id])
+          # Show 404 if the filename in the url is wrong
+          raise ActiveRecord::RecordNotFound if params[:filename] && params[:filename] != @attachment.filename
+          @project = @attachment.project
+          rescue ActiveRecord::RecordNotFound
+          render_404
+        end
+
       end
 
     end

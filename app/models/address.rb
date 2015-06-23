@@ -19,6 +19,7 @@
 
 class Address < ActiveRecord::Base
   attr_reader :country
+  attr_accessible :street1, :street2, :region, :city, :country_code, :postcode if ActiveRecord::VERSION::MAJOR >= 4
 
   belongs_to :addressable, :polymorphic => true
 

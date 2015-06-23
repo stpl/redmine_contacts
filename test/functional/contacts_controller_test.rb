@@ -47,17 +47,15 @@ class ContactsControllerTest < ActionController::TestCase
            :journal_details,
            :queries
 
-    ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :deals,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries,
-                             :addresses])
-
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries,
+                                                                                                                    :addresses])
 
   def setup
     RedmineContacts::TestCase.prepare
@@ -72,20 +70,23 @@ class ContactsControllerTest < ActionController::TestCase
     # log_user('admin', 'admin')
     @request.session[:user_id] = 1
     assert_not_nil Contact.find(1)
-
     get :index
     assert_response :success
     assert_template :index
     assert_not_nil assigns(:contacts)
     assert_not_nil assigns(:tags)
     assert_nil assigns(:project)
-    assert_tag :tag => 'a', :content => /Domoway/
-    assert_tag :tag => 'a', :content => /Marat/
-    assert_tag :tag => 'h3', :content => /Tags/
-    assert_tag :tag => 'h3', :content => /Recently viewed/
-
+    assert_select 'a', :html => /Domoway/
+    assert_select 'a', :html => /Marat/
+    assert_select 'h3', :html => /Tags/
+    assert_select 'h3', :html => /Recently viewed/
+    assert_select 'div#tags span#single_tags span.tag-label-color a', "test (3)"
     assert_select 'div#tags span#single_tags span.tag-label-color a', "main (2)"
-    assert_select 'div#tags span#single_tags span.tag-label-color a', "test (2)"
+    # assert_select 'div#tags span#single_tags span.tag-label-color a', { :count => 2, :text =>/(test (2)|main (2))/}
+    #   assert_select 'a', "main (2)"
+    #   assert_select 'a', "test (2)"
+    # end
+
 
     # private projects hidden
     # assert_no_tag :tag => 'a', :content => /Issue of a private subproject/
@@ -104,11 +105,10 @@ class ContactsControllerTest < ActionController::TestCase
     assert_template :index
     assert_not_nil assigns(:contacts)
     assert_not_nil assigns(:project)
-    assert_tag :tag => 'a', :content => /Domoway/
-    assert_tag :tag => 'a', :content => /Marat/
-    assert_tag :tag => 'h3', :content => /Tags/
-    assert_tag :tag => 'h3', :content => /Recently viewed/
-
+    assert_select 'a', :html => /Domoway/
+    assert_select 'a', :html => /Marat/
+    assert_select 'h3', :html => /Tags/
+    assert_select 'h3', :html => /Recently viewed/
   end
 
   test "should not absolute links" do
@@ -147,15 +147,11 @@ class ContactsControllerTest < ActionController::TestCase
     assert_template :show
     assert_not_nil assigns(:contact)
     assert_not_nil assigns(:project)
-    assert_tag :tag => 'h1', :content => /Domoway/
-
+    assert_select 'h1', :html => /Domoway/
     assert_select 'div#tags_data span.tag-label-color a', 'main'
     assert_select 'div#tags_data span.tag-label-color a', 'test'
-
     assert_select 'div#tab-placeholder-contacts'
-
     assert_select 'div#comments div#notes table.note_data td.name h4', 4
-
     assert_select 'h3', "Recently viewed"
   end
   test "should get new" do
@@ -190,7 +186,7 @@ class ContactsControllerTest < ActionController::TestCase
 
     assert_redirected_to :controller => 'contacts', :action => 'show', :id => Contact.last.id, :project_id => Contact.last.project
 
-    contact = Contact.find(:first, :conditions => {:first_name => "Created", :last_name => "New", :middle_name => "Ivanovich"})
+    contact = Contact.where(:first_name => "Created", :last_name => "New", :middle_name => "Ivanovich").first
     assert_not_nil contact
     assert_equal "CFO", contact.job_title
     assert_equal ["new", "test"], contact.tag_list.sort
@@ -239,7 +235,7 @@ class ContactsControllerTest < ActionController::TestCase
     @request.session[:user_id] = 1
     post :destroy, :id => 1, :project_id => 'ecookbook'
     assert_redirected_to :action => 'index', :project_id => 'ecookbook'
-    assert_nil Contact.find_by_id(1)
+    assert_equal 0, Contact.where(:id => [1]).count
   end
 
   test "should bulk destroy contacts" do
@@ -248,7 +244,7 @@ class ContactsControllerTest < ActionController::TestCase
     post :bulk_destroy, :ids => [1, 2, 3]
     assert_redirected_to :controller => 'contacts', :action => 'index'
 
-    assert_nil Contact.find_by_id(1, 2, 3)
+    assert_equal 0, Contact.where(:id => [1, 2, 3]).count
   end
 
   test "should not bulk destroy contacts by deny user" do
@@ -280,16 +276,16 @@ class ContactsControllerTest < ActionController::TestCase
     @request.session[:user_id] = 1
     xhr :post, :index, :search => "Domoway"
     assert_response :success
-    assert_template '_list'
-    assert_tag :tag => 'a', :content => /Domoway/
+    assert_template 'contacts/_list_excerpt'
+    assert_select 'a', :html => /Domoway/
   end
 
   test "should post index live search in project" do
     @request.session[:user_id] = 1
     xhr :post, :index, :search => "Domoway", :project_id => 'ecookbook'
     assert_response :success
-    assert_template '_list'
-    assert_tag :tag => 'a', :content => /Domoway/
+    assert_template 'contacts/_list_excerpt'
+    assert_select 'a', :html => /Domoway/
   end
 
   test "should post contacts_notes live search" do

@@ -58,12 +58,12 @@ module RedmineContacts
     end
 
     def contacts_for_select(project, options = {})
-      scope = Contact.scoped({})
-      scope = scope.scoped.limit(options[:limit] || 500)
-      scope = scope.scoped.companies if options.delete(:is_company)
+      scope = Contact.where({})
+      scope = scope.limit(options[:limit] || 500)
+      scope = scope.companies if options.delete(:is_company)
       scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
       scope = scope.by_project(project) if project
-      scope.sort!{|x, y| x.name <=> y.name }.collect {|m| [m.name, m.id.to_s]}
+      scope.to_a.sort!{|x, y| x.name <=> y.name }.collect {|m| [m.name, m.id.to_s]}
     end
 
     def link_to_remote_list_update(text, url_params)
@@ -158,6 +158,7 @@ module RedmineContacts
       options[:size] ||= "64"
       options[:width] ||= options[:size]
       options[:height] ||= options[:size]
+      options[:size] = "#{options[:width]}x#{options[:height]}" if ActiveRecord::VERSION::MAJOR >= 4
       options.merge!({:class => "gravatar"})
 
       obj_icon = obj.is_a?(Contact) ? (obj.is_company ? "company.png" : "person.png") : (obj.is_a?(Deal) ? "deal.png" : "unknown.png")

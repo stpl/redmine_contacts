@@ -46,15 +46,14 @@ class ContactsTagsControllerTest < ActionController::TestCase
            :journal_details,
            :queries
 
-    ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :deals,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries])
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
 
   def setup
     RedmineContacts::TestCase.prepare
@@ -73,12 +72,12 @@ class ContactsTagsControllerTest < ActionController::TestCase
     assert_response :success
     assert_template 'edit'
     assert_not_nil assigns(:tag)
-    assert_equal ActsAsTaggableOn::Tag.find(1), assigns(:tag)
+    assert_equal RedmineCrm::Tag.find(1), assigns(:tag)
   end
 
   test "should put update" do
     @request.session[:user_id] = 1
-    tag1 = ActsAsTaggableOn::Tag.find(1)
+    tag1 = RedmineCrm::Tag.find(1)
     old_name = tag1.name
     new_name = "updated main"
     put :update, :id => 1, :tag => {:name => new_name, :color_name=>"#000000"}
@@ -89,7 +88,7 @@ class ContactsTagsControllerTest < ActionController::TestCase
 
   test "should delete destroy" do
     @request.session[:user_id] = 1
-    assert_difference 'ActsAsTaggableOn::Tag.count', -1 do
+    assert_difference 'RedmineCrm::Tag.count', -1 do
       post :destroy, :id => 1
       assert_response 302
     end
@@ -97,8 +96,8 @@ class ContactsTagsControllerTest < ActionController::TestCase
 
   test "should get merge" do
     @request.session[:user_id] = 1
-    tag1 = ActsAsTaggableOn::Tag.find(1)
-    tag2 = ActsAsTaggableOn::Tag.find(2)
+    tag1 = RedmineCrm::Tag.find(1)
+    tag2 = RedmineCrm::Tag.find(2)
     get :merge, :ids => [tag1.id, tag2.id]
     assert_response :success
     assert_template 'merge'
@@ -107,14 +106,14 @@ class ContactsTagsControllerTest < ActionController::TestCase
 
   test "should post merge" do
     @request.session[:user_id] = 1
-    tag1 = ActsAsTaggableOn::Tag.find(1)
-    tag2 = ActsAsTaggableOn::Tag.find(2)
-    assert_difference 'ActsAsTaggableOn::Tag.count', -1 do
+    tag1 = RedmineCrm::Tag.find(1)
+    tag2 = RedmineCrm::Tag.find(2)
+    assert_difference 'RedmineCrm::Tag.count', -1 do
       post :merge, :ids => [tag1.id, tag2.id], :tag => {:name => "main"}
       assert_redirected_to :controller => 'settings', :action => 'plugin', :id => "redmine_contacts", :tab => "tags"
     end
     assert_equal 0, Contact.tagged_with("test").count
-    assert_equal 4, Contact.tagged_with("main").count
+    assert_equal 4, Contact.tagged_with("main").count #added one more tagging for tag2
   end
 
 end

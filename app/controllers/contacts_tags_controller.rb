@@ -71,9 +71,9 @@ class ContactsTagsController < ApplicationController
 
   def merge
     if request.post? && params[:tag] && params[:tag][:name]
-      ActsAsTaggableOn::Tagging.transaction do
-        tag = ActsAsTaggableOn::Tag.find_by_name(params[:tag][:name]) || ActsAsTaggableOn::Tag.create(params[:tag])
-        ActsAsTaggableOn::Tagging.where(:tag_id => @tags.map(&:id)).update_all(:tag_id => tag.id)
+      RedmineCrm::Tagging.transaction do
+        tag = RedmineCrm::Tag.where(:name => params[:tag][:name]).first || RedmineCrm::Tag.create(params[:tag])
+        RedmineCrm::Tagging.where(:tag_id => @tags.map(&:id)).update_all(:tag_id => tag.id)
         @tags.select{|t| t.id != tag.id}.each do |t|
           t.destroy
           Contact.where("#{Contact.table_name}.cached_tag_list LIKE ?", '%' + t.name + '%').includes(:tags).each{|c| c.tag_list = c.all_tags_list; c.save}
@@ -86,12 +86,12 @@ class ContactsTagsController < ApplicationController
   private
 
   def bulk_find_tags
-    @tags = ActsAsTaggableOn::Tag.find_all_by_id(params[:id] || params[:ids])
+    @tags = RedmineCrm::Tag.where(:id => params[:id] ? [params[:id]] : params[:ids])
     raise ActiveRecord::RecordNotFound if @tags.empty?
   end
 
   def find_tag
-    @tag = ActsAsTaggableOn::Tag.find(params[:id])
+    @tag = RedmineCrm::Tag.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render_404
   end

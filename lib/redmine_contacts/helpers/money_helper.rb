@@ -19,8 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-require 'money'
-
 module RedmineContacts
   module MoneyHelper
 
@@ -57,13 +55,13 @@ module RedmineContacts
       currencies << default_currency.to_s unless default_currency.blank?
       currencies |= ContactsSetting.major_currencies
       currencies.map do |c|
-        currency = Money::Currency.find(c)
+        currency = RedmineCrm::Currency.find(c)
         ["#{currency.iso_code} (#{currency.symbol})", currency.iso_code] if currency
       end.compact.uniq
     end
 
     def all_currencies
-      Money::Currency.table.inject([]) do |array, (id, attributes)|
+      RedmineCrm::Currency.table.inject([]) do |array, (id, attributes)|
         array ||= []
         array << ["#{attributes[:name]}" + (attributes[:symbol].blank? ? "" : " (#{attributes[:symbol]})"), attributes[:iso_code]]
         array
@@ -74,7 +72,15 @@ module RedmineContacts
       return '' if price.blank?
       options[:decimal_mark] = ContactsSetting.decimal_separator unless options[:decimal_mark]
       options[:thousands_separator] = ContactsSetting.thousands_delimiter unless options[:thousands_separator]
-      Money.from_float(price.to_f, currency).format(options) rescue ActionController::Base.helpers.number_with_delimiter(price.to_f, :separator => ContactsSetting.decimal_separator, :delimiter => ContactsSetting.thousands_delimiter, :precision => 2)
+      # RedmineCrm::Currency.from_float(price.to_f, currency).format(options) rescue ActionController::Base.helpers.number_with_delimiter(price.to_f, :separator => ContactsSetting.decimal_separator, :delimiter => ContactsSetting.thousands_delimiter, :precision => 2)
+      if currency
+        if currency.is_a? String
+          currency = RedmineCrm::Currency.find(currency)
+        end
+      else
+        currency = RedmineCrm::Currency.find("USD")
+      end
+      ActionController::Base.helpers.number_to_currency(price.to_f, :unit => currency.code)
     end
 
   end

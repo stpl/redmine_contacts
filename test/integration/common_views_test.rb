@@ -22,7 +22,8 @@
 require File.expand_path('../../test_helper', __FILE__)
 require File.expand_path(File.dirname(__FILE__) + '/../../../../test/test_helper')
 
-class CommonViewsTest < ActionController::IntegrationTest
+
+class CommonViewsTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmine::ApiTest::Base : ActionController::IntegrationTest
   fixtures :projects,
            :users,
            :roles,
@@ -47,17 +48,16 @@ class CommonViewsTest < ActionController::IntegrationTest
            :journal_details,
            :queries
 
-    ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :deals_issues,
-                             :deals,
-                             :deal_statuses,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries])
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals_issues,
+                                                                                                                    :deals,
+                                                                                                                    :deal_statuses,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
 
   def setup
     RedmineContacts::TestCase.prepare
@@ -93,7 +93,7 @@ class CommonViewsTest < ActionController::IntegrationTest
 
   test "View contact tag edit" do
     log_user("admin", "admin")
-    get "contacts_tags/1/edit"
+    get "/contacts_tags/1/edit"
     assert_response :success
   end
 
@@ -111,18 +111,18 @@ class CommonViewsTest < ActionController::IntegrationTest
 
   test "View contacts notes list" do
     log_user("admin", "admin")
-    get "contacts/notes"
+    get "/contacts/notes"
     assert_response :success
   end
 
   test "View issue contacts" do
     log_user("admin", "admin")
     EnabledModule.create(:project_id => 1, :name => 'issue_tracking')
-    issue = Issue.find(1)
-    contact = Contact.find(1)
+    issue = Issue.where(:id => 1).first
+    contact = Contact.where(:id => 1).first
     issue.contacts << contact
     issue.save
-    get "issues/1"
+    get "/issues/1"
     assert_response :success
   end
 

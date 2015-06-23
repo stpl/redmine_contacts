@@ -40,22 +40,20 @@ module RedmineContacts
         def taggable_tags
           klass = Object.const_get(params[:taggable_type].camelcase)
           @name = params[:q].to_s
-          @tags = klass.all_tag_counts(:conditions => ["#{ActsAsTaggableOn::Tag.table_name}.name LIKE ?", "%#{@name}%"], :limit => 10)
+          @tags = klass.all_tag_counts(:conditions => ["#{RedmineCrm::Tag.table_name}.name LIKE ?", "%#{@name}%"], :limit => 10)
           render :layout => false, :partial => 'crm_tag_list'
         end
 
         def contacts
           @contacts = []
           q = (params[:q] || params[:term]).to_s.strip
-            scope = Contact.scoped({})
-            scope = scope.includes(:avatar)
-            scope = scope.scoped.limit(params[:limit] || 10)
-            scope = scope.scoped.companies if params[:is_company]
+            scope = Contact.includes(:avatar).where({})
+            scope = scope.limit(params[:limit] || 10)
+            scope = scope.companies if params[:is_company]
             scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
             q.split(' ').collect{ |search_string| scope = scope.live_search(search_string) } unless q.blank?
             scope = scope.by_project(@project) if @project
-            @contacts = scope.sort!{|x, y| x.name <=> y.name }
-
+            @contacts = scope.to_a.sort!{|x, y| x.name <=> y.name }
           render :layout => false, :partial => 'contacts'
         end
 
@@ -63,12 +61,12 @@ module RedmineContacts
           @companies = []
           q = (params[:q] || params[:term]).to_s.strip
           if q.present?
-            scope = Contact.scoped({})
+            scope = Contact.joins(:projects).where({})
+            scope = scope.limit(params[:limit] || 10)
             scope = scope.includes(:avatar)
-            scope = scope.scoped.limit(params[:limit] || 10)
             scope = scope.by_project(@project) if @project
-            q.split(' ').collect{ |search_string| scope = scope.like_by(:first_name, search_string) } unless q.blank?
-            @companies = scope.visible.companies.sort!{|x, y| x.name <=> y.name }
+            q.split(' ').collect{ |search_string| scope = scope.where('LOWER(first_name) LIKE LOWER(?)', "#{search_string}%") } unless q.blank?
+            @companies = scope.visible.companies.order(:first_name)
           end
           render :layout => false, :partial => 'companies'
         end

@@ -209,10 +209,10 @@ es:
   label_crm_added_by: Añadido por
   label_crm_contact_note_authoring_time: Mostrar hora de la nota
   label_crm_contact_issues_filters: Filtros de tareas
-  label_crm_contacts_csv_import: Importar desde CSV
-  label_crm_contacts_upload_encoding: Codificación del fichero
-  label_crm_contacts_csv_file: fichero CSV
-  label_crm_contacts_csv_separator: Separador
+  label_crm_csv_import: Importar desde CSV
+  label_crm_upload_encoding: Codificación del fichero
+  label_crm_csv_file: fichero CSV
+  label_crm_csv_separator: Separador
   field_middle_name: Segundo nombre
   field_job_title: Puesto
   field_company: Compañía

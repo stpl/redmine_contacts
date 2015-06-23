@@ -4,6 +4,20 @@ Redmine CRM plugin - customer relationship management plugin for redmine
 Copyright (C) 2011-2015 Kirill Bezrukov
 http://www.redminecrm.com/
 
+== 2015-06-18 v4.0.1
+
+* Fixed but with contact avatar preview
+* Fixed bug on user creation
+* Fixed CSV export error for trunk Redmine version
+
+== 2015-06-15 v4.0.0
+
+* Redmine 3 support
+* Spanish Translation update (Luis Blasco)
+* Chinese translation (zhoutt)
+* Fixed bug with sorting contacts by assignee
+* ID field for contacts list
+
 == 2015-03-19 v3.4.5
 
 * List optional filter for contact on issues list

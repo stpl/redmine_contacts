@@ -26,7 +26,7 @@ module CrmQueriesHelper
     if !params[:query_id].blank?
       cond = "project_id IS NULL"
       cond << " OR project_id = #{@project.id}" if @project
-      @query = query_class.find(params[:query_id], :conditions => cond)
+      @query = query_class.where(cond).find(params[:query_id])
       raise ::Unauthorized unless @query.visible?
       @query.project = @project
       session["#{object_type}_query".to_sym] = {:id => @query.id, :project_id => @query.project_id}
@@ -39,7 +39,7 @@ module CrmQueriesHelper
       session["#{object_type}_query".to_sym] = {:project_id => @query.project_id, :filters => @query.filters, :group_by => @query.group_by, :column_names => @query.column_names}
     else
       # retrieve from session
-      @query = query_class.find_by_id(session["#{object_type}_query".to_sym][:id]) if session["#{object_type}_query".to_sym][:id]
+      @query = query_class.find(session["#{object_type}_query".to_sym][:id]) if session["#{object_type}_query".to_sym][:id]
       @query ||= query_class.new(:name => "_", :filters => session["#{object_type}_query".to_sym][:filters], :group_by => session["#{object_type}_query".to_sym][:group_by], :column_names => session["#{object_type}_query".to_sym][:column_names])
       @query.project = @project
     end
@@ -61,7 +61,7 @@ module CrmQueriesHelper
 
   def sidebar_crm_queries(query_class)
     unless @sidebar_queries
-      @sidebar_queries = query_class.visible.
+      @sidebar_queries = query_class.joins(:project).visible.
         where(@project.nil? ? ["project_id IS NULL"] : ["project_id IS NULL OR project_id = ?", @project.id]).
         order("#{query_class.table_name}.name ASC")
     end

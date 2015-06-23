@@ -19,8 +19,13 @@
 
 require 'redmine'
 
-CONTACTS_VERSION_NUMBER = '3.4.5'
+CONTACTS_VERSION_NUMBER = '4.0.1'
 CONTACTS_VERSION_TYPE = "Light version"
+
+if ActiveRecord::VERSION::MAJOR >= 4
+  require 'csv'
+  FCSV = CSV
+end
 
 Redmine::Plugin.register :redmine_contacts do
   name "Redmine CRM plugin (#{CONTACTS_VERSION_TYPE})"

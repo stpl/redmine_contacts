@@ -18,42 +18,34 @@
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
 module RedmineContacts
-  module Acts
-    module Priceable
+  module Patches
+    module UserPatch
       def self.included(base)
-        base.extend ClassMethods
-      end
 
-      module ClassMethods
-        def acts_as_priceable(*args)
-          priceable_options = args
-          priceable_options << :price if priceable_options.empty?
-          priceable_methods = ""
-          priceable_options.each do |priceable_attr|
-            priceable_methods << %(
-              def #{priceable_attr.to_s}_to_s
-                object_price(self, :#{priceable_attr}) if self.respond_to?(:#{priceable_attr})
-              end
-            )
+        base.class_eval do
+          scope :having_mail, lambda {|arg|
+            addresses = Array.wrap(arg).map {|a| a.to_s.downcase}
+            if addresses.any?
+              joins(:email_addresses).where("LOWER(#{EmailAddress.table_name}.address) IN (?)", addresses).uniq
+            else
+              none
+            end
+          }
+
+          def self.find_by_mail(mail)
+            if ActiveRecord::VERSION::MAJOR >= 4
+              mail.is_a?(Array) ? mail : [mail]
+              having_mail(mail).first
+            else
+              where("LOWER(mail) = ?", mail.to_s.downcase).first
+            end
           end
-
-          class_eval <<-EOV
-            include RedmineCrm::MoneyHelper
-            include RedmineContacts::Acts::Priceable::InstanceMethods
-
-            #{priceable_methods}
-          EOV
-
         end
       end
-
-      module InstanceMethods
-        def self.included(base)
-          base.extend ClassMethods
-        end
-
-      end
-
     end
   end
+end
+
+unless User.included_modules.include?(RedmineContacts::Patches::UserPatch)
+  User.send(:include, RedmineContacts::Patches::UserPatch)
 end

@@ -23,10 +23,10 @@ module RedmineContacts
       def self.included(base)
         base.extend(ClassMethods)
         base.class_eval do
-            unloadable
-            class << self
-                alias_method_chain :all, :crm
-            end
+          unloadable
+          class << self
+              alias_method_chain :all, :crm
+          end
         end
       end
 

@@ -46,15 +46,14 @@ class NotesControllerTest < ActionController::TestCase
            :journal_details,
            :queries
 
-    ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :deals,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries])
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
 
   def setup
     RedmineContacts::TestCase.prepare
@@ -78,7 +77,7 @@ class NotesControllerTest < ActionController::TestCase
 
     end
 
-    note = Note.find(:first, :conditions => {:subject => "Note subject", :content => "Note *content*"})
+    note = Note.where(:subject => "Note subject", :content => "Note *content*").first
     assert_not_nil note
     assert_equal 1, note.source_id
     assert_equal Contact, note.source.class

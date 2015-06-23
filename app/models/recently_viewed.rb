@@ -19,6 +19,7 @@
 
 class RecentlyViewed < ActiveRecord::Base
   unloadable
+  attr_accessible :viewer
 
   RECENTLY_VIEWED_LIMIT = 5
 

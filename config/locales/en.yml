@@ -607,3 +607,10 @@ en:
   #3.4.4
   label_crm_pipeline: Pipeline
   text_crm_no_deal_statuses_in_project: No deal statuses in project
+
+  #3.4.6
+  label_crm_contact_email: Contact's email
+  label_crm_light_free_version: CRM Light free version
+  label_crm_link_to_pro: Upgrade to PRO 
+  label_crm_link_to_pro_demo: PRO version live demo
+  label_crm_link_to_more_plugins: Find more RedmineCRM plugins

@@ -73,11 +73,11 @@ class ContactsDuplicatesController < ApplicationController
     @contacts = []
     q = (params[:q] || params[:term]).to_s.strip
     if q.present?
-      scope = Contact.scoped({})
+      scope = Contact.where({})
       scope = scope.limit(params[:limit] || 10)
       scope = scope.companies if params[:is_company]
       scope = scope.where(["#{Contact.table_name}.id <> ?", params[:contact_id].to_i]) if params[:contact_id]
-      @contacts = scope.visible.by_project(@project).live_search(q).sort!{|x, y| x.name <=> y.name }
+      @contacts = scope.visible.by_project(@project).live_search(q).to_a.sort!{|x, y| x.name <=> y.name }
     else
       @contacts = @contact.duplicates
     end

@@ -17,14 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-require 'redmine_contacts/helpers/money_helper'
+# require 'redmine_contacts/helpers/money_helper'
 require 'redmine_contacts/helpers/contacts_helper'
 require 'redmine_contacts/helpers/crm_calendar_helper'
 
 # Plugins
 require 'acts_as_viewable/init'
 require 'acts_as_priceable/init'
-require 'acts_as_taggable_on_patch'
 
 require_dependency 'redmine_contacts/utils/thumbnail'
 require_dependency 'redmine_contacts/utils/check_mail'
@@ -33,6 +32,9 @@ require_dependency 'redmine_contacts/utils/csv_utils'
 require_dependency 'redmine_contacts/contacts_project_setting'
 
 # Patches
+require_dependency 'redmine_contacts/patches/compatibility/active_record_base_patch'
+require_dependency 'redmine_contacts/patches/compatibility/active_record_sanitization_patch.rb'
+require_dependency 'redmine_contacts/patches/compatibility/user_patch.rb'
 require_dependency 'redmine_contacts/patches/compatibility_patch'
 require_dependency 'redmine_contacts/patches/issue_patch'
 require_dependency 'redmine_contacts/patches/project_patch'

@@ -21,6 +21,7 @@ class ContactsIssue < ActiveRecord::Base
   validates_presence_of :contact_id, :issue_id
   validates_uniqueness_of :contact_id, :scope => [:issue_id]
 
+  attr_accessible :issue_id, :contact_id if ActiveRecord::VERSION::MAJOR >= 4
   # after_create :send_mails
   # after_save :send_mails
 

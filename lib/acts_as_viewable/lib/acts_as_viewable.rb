@@ -43,7 +43,7 @@ module ActsAsViewable
       end
 
       def viewed(user = User.current)
-        rv = (self.views.find(:first, :conditions => {:viewer_id => User.current.id}) || self.views.new(:viewer => user))
+        rv = (self.views.where(:viewer_id => User.current.id).first || self.views.new(:viewer => user))
         rv.increment(:views_count)
         rv.save!
       end

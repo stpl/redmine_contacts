@@ -21,13 +21,24 @@ class ContactNote < Note
   unloadable
   belongs_to :contact, :foreign_key => :source_id
 
-  acts_as_activity_provider :type => 'contacts',
-                            :permission => :view_contacts,
-                            :author_key => :author_id,
-                            :find_options => {:include => [:contact => :projects], :conditions => {:source_type => 'Contact'} }
+  attr_accessible :subject, :type_id, :content, :source, :author_id if ActiveRecord::VERSION::MAJOR >= 4
+
+  if ActiveRecord::VERSION::MAJOR >= 4
+    if ActiveRecord::Base.connection.table_exists?('notes')
+      acts_as_activity_provider :type => 'contacts',
+                                :permission => :view_contacts,
+                                :author_key => :author_id,
+                                :scope => joins(:contact => :projects).where(:source_type => 'Contact')
+    end
+  else
+    acts_as_activity_provider :type => 'contacts',
+                              :permission => :view_contacts,
+                              :author_key => :author_id,
+                              :find_options => {:include => [:contact => :projects], :conditions => {:source_type => 'Contact'} }
+  end
 
   scope :visible,
-        lambda {|*args| includes([:contact => :projects]).
+        lambda {|*args| joins([:contact => :projects]).
                         where(Contact.visible_condition(args.shift || User.current, *args) +
                                          " AND (#{ContactNote.table_name}.source_type = 'Contact')")}
 

@@ -23,7 +23,7 @@ class CreateRecentlyVieweds < ActiveRecord::Migration
       t.references :viewer
       t.references :viewed, :polymorphic => true
       t.column :views_count, :integer
-      t.timestamps
+      t.timestamps :null => false
     end
 
     add_index :recently_vieweds, [:viewed_id, :viewed_type]

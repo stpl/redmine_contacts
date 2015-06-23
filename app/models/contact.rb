@@ -78,7 +78,7 @@ class Contact < ActiveRecord::Base
   VISIBILITY_PUBLIC = 1
   VISIBILITY_PRIVATE = 2
 
-  delegate :street1, :city, :country, :postcode, :region, :post_address, :to => :address, :allow_nil => true
+  delegate :street1, :street2, :city, :country, :country_code, :postcode, :region, :post_address, :to => :address, :allow_nil => true
 
   has_many :notes, :as => :source, :class_name => 'ContactNote', :dependent => :delete_all
   has_many :addresses, :dependent => :destroy, :as => :addressable, :class_name => "Address"
@@ -86,13 +86,19 @@ class Contact < ActiveRecord::Base
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
   has_and_belongs_to_many :projects, :uniq => true
   has_and_belongs_to_many :issues, :order => "#{Issue.table_name}.due_date", :uniq => true
-  has_one :avatar, :conditions => "#{Attachment.table_name}.description = 'avatar'", :class_name => "Attachment", :as  => :container, :dependent => :destroy
-  has_one :address, :conditions => {:address_type => "business"}, :dependent => :destroy, :as => :addressable, :class_name => "Address"
+
+  if ActiveRecord::VERSION::MAJOR >= 4
+    has_one :avatar, lambda { where("#{Attachment.table_name}.description = 'avatar'") }, :class_name => "Attachment", :as  => :container, :dependent => :destroy
+    has_one :address, lambda { where(:address_type => "business") }, :dependent => :destroy, :as => :addressable, :class_name => "Address"
+  else
+    has_one :avatar, :conditions => "#{Attachment.table_name}.description = 'avatar'", :class_name => "Attachment", :as  => :container, :dependent => :destroy
+    has_one :address, :conditions => {:address_type => "business"}, :dependent => :destroy, :as => :addressable, :class_name => "Address"
+  end
 
   attr_accessor :phones
   attr_accessor :emails
   acts_as_viewable
-  acts_as_taggable
+  rcrm_acts_as_taggable
   acts_as_watchable
   acts_as_attachable :view_permission => :view_contacts,
                      :delete_permission => :edit_contacts
@@ -104,29 +110,48 @@ class Contact < ActiveRecord::Base
                 :title => lambda {|o| o.name },
                 :description => lambda {|o| [o.info, o.company, o.email, o.address, o.background].join(' ') }
 
-  acts_as_activity_provider :type => 'contacts',
-                            :permission => :view_contacts,
-                            :author_key => :author_id,
-                            :find_options => {:include => :projects}
+  if ActiveRecord::VERSION::MAJOR >= 4
+    acts_as_activity_provider :type => 'contacts',
+                              :permission => :view_contacts,
+                              :author_key => :author_id,
+                              :scope => joins(:projects)
 
-  acts_as_searchable :columns => ["#{table_name}.first_name",
-                                  "#{table_name}.middle_name",
-                                  "#{table_name}.last_name",
-                                  "#{table_name}.company",
-                                  "#{table_name}.email",
-                                  "#{Address.table_name}.full_address",
-                                  "#{table_name}.background",
-                                  "#{ContactNote.table_name}.content"],
-                     :project_key => "#{Project.table_name}.id",
-                     :include => [:projects, :address, :notes],
-                     # sort by id so that limited eager loading doesn't break with postgresql
-                     :order_column => "#{table_name}.id"
+    acts_as_searchable :columns => ["#{table_name}.first_name",
+                                    "#{table_name}.middle_name",
+                                    "#{table_name}.last_name",
+                                    "#{table_name}.company",
+                                    "#{table_name}.email",
+                                    "#{Address.table_name}.full_address",
+                                    "#{table_name}.background",
+                                    "#{ContactNote.table_name}.content"],
+                       :project_key => "#{Project.table_name}.id",
+                       :scope => includes([:address, :notes]),
+                       :date_column => "created_on"
+  else
+    acts_as_activity_provider :type => 'contacts',
+                              :permission => :view_contacts,
+                              :author_key => :author_id,
+                              :find_options => {:include => :projects}
+
+    acts_as_searchable :columns => ["#{table_name}.first_name",
+                                    "#{table_name}.middle_name",
+                                    "#{table_name}.last_name",
+                                    "#{table_name}.company",
+                                    "#{table_name}.email",
+                                    "#{Address.table_name}.full_address",
+                                    "#{table_name}.background",
+                                    "#{ContactNote.table_name}.content"],
+                       :project_key => "#{Project.table_name}.id",
+                       :include => [:projects, :address, :notes],
+                       # sort by id so that limited eager loading doesn't break with postgresql
+                       :order_column => "#{table_name}.id"
+  end
 
   accepts_nested_attributes_for :address, :allow_destroy => true, :update_only => true, :reject_if => proc {|attributes| Address.reject_address(attributes)}
 
-  scope :visible, lambda {|*args| includes(:projects).where(Contact.visible_condition(args.shift || User.current, *args)) }
-  scope :deletable, lambda {|*args| includes(:projects).where(Contact.deletable_condition(args.shift || User.current, *args)) }
-  scope :editable, lambda {|*args| includes(:projects).where(Contact.editable_condition(args.shift || User.current, *args)) }
+  scope :visible, lambda {|*args| joins(:projects).where(Contact.visible_condition(args.shift || User.current, *args)) }
+  scope :deletable, lambda {|*args| joins(:projects).where(Contact.deletable_condition(args.shift || User.current, *args)).readonly(false) }
+  scope :editable, lambda {|*args| joins(:projects).where(Contact.editable_condition(args.shift || User.current, *args)).readonly(false) }
   scope :by_project, lambda {|prj| joins(:projects).where("#{Project.table_name}.id = ?", prj) unless prj.blank? }
   scope :like_by, lambda {|field, search| {:conditions => ["LOWER(#{Contact.table_name}.#{field}) LIKE ?", search.downcase + "%"] }}
   scope :companies, lambda { where(:is_company => true) }
@@ -213,30 +238,30 @@ class Contact < ActiveRecord::Base
   def self.available_tags(options = {})
     limit = options[:limit]
 
-    scope = ActsAsTaggableOn::Tag.scoped({})
-    scope = scope.scoped(:conditions => ["#{Project.table_name}.id = ?", options[:project]]) if options[:project]
-    scope = scope.scoped(:conditions => [Contact.visible_condition(options[:user] || User.current)])
-    scope = scope.scoped(:conditions => ["LOWER(#{ActsAsTaggableOn::Tag.table_name}.name) LIKE ?", "%#{options[:name_like].downcase}%"]) if options[:name_like]
+    scope = RedmineCrm::Tag.where({})
+    scope = scope.where("#{Project.table_name}.id = ?", options[:project]) if options[:project]
+    scope = scope.where(Contact.visible_condition(options[:user] || User.current))
+    scope = scope.where("LOWER(#{RedmineCrm::Tag.table_name}.name) LIKE ?", "%#{options[:name_like].downcase}%") if options[:name_like]
 
     joins = []
-    joins << "JOIN #{ActsAsTaggableOn::Tagging.table_name} ON #{ActsAsTaggableOn::Tagging.table_name}.tag_id = #{ActsAsTaggableOn::Tag.table_name}.id "
-    joins << "JOIN #{Contact.table_name} ON #{Contact.table_name}.id = #{ActsAsTaggableOn::Tagging.table_name}.taggable_id AND #{ActsAsTaggableOn::Tagging.table_name}.taggable_type =  '#{Contact.name}' "
+    joins << "JOIN #{RedmineCrm::Tagging.table_name} ON #{RedmineCrm::Tagging.table_name}.tag_id = #{RedmineCrm::Tag.table_name}.id "
+    joins << "JOIN #{Contact.table_name} ON #{Contact.table_name}.id = #{RedmineCrm::Tagging.table_name}.taggable_id AND #{RedmineCrm::Tagging.table_name}.taggable_type =  '#{Contact.name}' "
     joins << Contact.projects_joins
 
-    scope = scope.select("#{ActsAsTaggableOn::Tag.table_name}.*, COUNT(DISTINCT #{ActsAsTaggableOn::Tagging.table_name}.taggable_id) AS count")
+    scope = scope.select("#{RedmineCrm::Tag.table_name}.*, COUNT(DISTINCT #{RedmineCrm::Tagging.table_name}.taggable_id) AS count")
     scope = scope.joins(joins.flatten)
-    scope = scope.group("#{ActsAsTaggableOn::Tag.table_name}.id, #{ActsAsTaggableOn::Tag.table_name}.name HAVING COUNT(*) > 0")
+    scope = scope.group("#{RedmineCrm::Tag.table_name}.id, #{RedmineCrm::Tag.table_name}.name HAVING COUNT(*) > 0")
     scope = scope.limit(limit) if limit
-    scope = scope.order("#{ActsAsTaggableOn::Tag.table_name}.name")
+    scope = scope.order("#{RedmineCrm::Tag.table_name}.name")
     scope
   end
 
   def duplicates(limit=10)
-    scope = Contact.scoped({})
-    scope = scope.like_by("first_name",  self.first_name.strip) if !self.first_name.blank?
-    scope = scope.like_by("middle_name",  self.middle_name.strip) if !self.middle_name.blank?
-    scope = scope.like_by("last_name",  self.last_name.strip) if !self.last_name.blank?
-    scope = scope.scoped(:conditions => ["#{Contact.table_name}.id <> ?", self.id]) if !self.new_record?
+    scope = Contact.where({})
+    scope = scope.where("LOWER(first_name) LIKE LOWER(?)", "%#{ self.first_name.strip }%") if !self.first_name.blank?
+    scope = scope.where("LOWER(middle_name) LIKE LOWER(?)", "%#{ self.middle_name.strip }%") if !self.middle_name.blank?
+    scope = scope.where("LOWER(last_name) LIKE LOWER(?)", "%#{ self.last_name.strip }%") if !self.last_name.blank?
+    scope = scope.where("#{Contact.table_name}.id <> ?", self.id) if !self.new_record?
     @duplicates ||= (self.first_name.blank? && self.last_name.blank? && self.middle_name.blank?) ? [] : scope.visible.limit(limit)
   end
 
@@ -246,7 +271,11 @@ class Contact < ActiveRecord::Base
   alias_method :employees, :company_contacts
 
   def redmine_user
-    @redmine_user ||= User.where(:mail => emails).first unless self.email.blank?
+    if ActiveRecord::VERSION::MAJOR >= 4
+      @redmine_user ||= User.joins(:email_address).where("LOWER(#{EmailAddress.table_name}.address) IN (?)", emails).first unless self.email.blank?
+    else
+      @redmine_user ||= User.where(:mail => emails).first unless self.email.blank?
+    end
   end
 
   def contact_company
@@ -310,7 +339,7 @@ class Contact < ActiveRecord::Base
     if current_project && self.projects.visible.include?(current_project)
       @project  = current_project
     else
-      @project  = self.projects.visible.find(:first, :conditions => Project.allowed_to_condition(User.current, :view_contacts))
+      @project  = self.projects.visible.where(Project.allowed_to_condition(User.current, :view_contacts)).first
     end
 
     @project ||= self.projects.first

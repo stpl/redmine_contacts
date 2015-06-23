@@ -221,7 +221,7 @@ class ContactsController < ApplicationController
   end
 
   def bulk_destroy
-    @contacts = Contact.deletable.find_all_by_id(params[:ids])
+    @contacts = Contact.deletable.where(:id => params[:ids])
     raise ActiveRecord::RecordNotFound if @contacts.empty?
     @contacts.each(&:destroy)
     redirect_back_or_default({:action => "index", :project_id => params[:project_id]})
@@ -249,9 +249,9 @@ private
   end
 
   def last_notes(count=5)
-    scope = ContactNote.scoped({})
-    scope = scope.scoped(:conditions => ["#{Project.table_name}.id = ?", @project.id]) if @project
-    scope = scope.includes(:attachments)
+    scope = ContactNote.where({})
+    scope = scope.where("#{Project.table_name}.id = ?", @project.id) if @project
+    scope = scope.joins(:attachments)
 
     @last_notes = scope.visible.
       limit(count).
@@ -272,13 +272,13 @@ private
   end
 
   def find_contacts(pages=true)
-    @tag = ActsAsTaggableOn::TagList.from(params[:tag]) unless params[:tag].blank?
+    @tag = RedmineCrm::TagList.from(params[:tag]) unless params[:tag].blank?
 
-    scope = Contact.scoped({})
-    scope = scope.scoped(:conditions => ["#{Contact.table_name}.job_title = ?", params[:job_title]]) unless params[:job_title].blank?
-    scope = scope.scoped(:conditions => ["#{Contact.table_name}.assigned_to_id = ?", params[:assigned_to_id]]) unless params[:assigned_to_id].blank?
-    scope = scope.scoped(:conditions => ["#{Contact.table_name}.is_company = ?", params[:query]]) unless (params[:query].blank? || params[:query] == '2' || params[:query] == '3')
-    scope = scope.scoped(:conditions => ["#{Contact.table_name}.author_id = ?", User.current]) if params[:query] == '3'
+    scope = Contact.where({})
+    scope = scope.where("#{Contact.table_name}.job_title = ?", params[:job_title]) unless params[:job_title].blank?
+    scope = scope.where("#{Contact.table_name}.assigned_to_id = ?", params[:assigned_to_id]) unless params[:assigned_to_id].blank?
+    scope = scope.where("#{Contact.table_name}.is_company = ?", params[:query]) unless (params[:query].blank? || params[:query] == '2' || params[:query] == '3')
+    scope = scope.where("#{Contact.table_name}.author_id = ?", User.current) if params[:query] == '3'
 
     case params[:query]
       when '2' then scope = scope.order_by_creation

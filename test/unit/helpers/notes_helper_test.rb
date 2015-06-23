@@ -36,15 +36,15 @@ class NotesHelperTest < ActionView::TestCase
            :groups_users,
            :enabled_modules
 
-  ActiveRecord::Fixtures.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/',
-                          [:contacts,
-                           :contacts_projects,
-                           :contacts_issues,
-                           :deals,
-                           :notes,
-                           :tags,
-                           :taggings,
-                           :queries])
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
+
   def setup
     super
     set_language_if_valid('en')

@@ -46,15 +46,14 @@ class ContactsIssuesControllerTest < ActionController::TestCase
            :journal_details,
            :queries
 
-    ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/../fixtures/',
-                            [:contacts,
-                             :contacts_projects,
-                             :contacts_issues,
-                             :deals,
-                             :notes,
-                             :tags,
-                             :taggings,
-                             :queries])
+  RedmineContacts::TestCase.create_fixtures(Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/', [:contacts,
+                                                                                                                    :contacts_projects,
+                                                                                                                    :contacts_issues,
+                                                                                                                    :deals,
+                                                                                                                    :notes,
+                                                                                                                    :tags,
+                                                                                                                    :taggings,
+                                                                                                                    :queries])
 
   def setup
     RedmineContacts::TestCase.prepare
@@ -102,7 +101,11 @@ class ContactsIssuesControllerTest < ActionController::TestCase
     xhr :get, :autocomplete_for_contact, :q => 'domo', :issue_id => '1' , :project_id => 'ecookbook', :cross_project_contacts => "1"
     assert_response :success
     assert_select 'input', :count => 1
-    assert_select 'input[name=?][value=3]', 'contacts_issue[contact_ids][]'
+    if ActiveRecord::VERSION::MAJOR >= 4
+      assert_select "input[name='contacts_issue[contact_ids][]'][value='3']"
+    else
+      assert_select 'input[name=?][value=3]', 'contacts_issue[contact_ids][]'
+    end
   end
 
   def test_new
