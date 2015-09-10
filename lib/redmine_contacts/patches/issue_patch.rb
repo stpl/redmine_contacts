@@ -28,7 +28,11 @@ module RedmineContacts
         base.send(:include, InstanceMethods)
         base.class_eval do
           unloadable # Send unloadable so it will not be unloaded in development
-          has_and_belongs_to_many :contacts, :uniq => true
+          if ActiveRecord::VERSION::MAJOR >= 4
+            has_and_belongs_to_many :contacts, lambda{ uniq }
+          else
+            has_and_belongs_to_many :contacts, :uniq => true
+          end
         end
       end
 

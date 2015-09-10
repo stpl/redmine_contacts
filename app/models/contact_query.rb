@@ -48,7 +48,7 @@ class ContactQuery < CrmQuery
 
   def initialize(attributes=nil, *args)
     super attributes
-    self.filters = {}
+    self.filters ||= {}
   end
 
   def initialize_available_filters

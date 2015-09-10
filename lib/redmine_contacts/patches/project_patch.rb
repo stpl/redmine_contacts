@@ -23,7 +23,13 @@ module RedmineContacts
       def self.included(base) # :nodoc:
         base.class_eval do
           unloadable # Send unloadable so it will not be unloaded in development
-          has_and_belongs_to_many :contacts, :order => "#{Contact.table_name}.last_name, #{Contact.table_name}.first_name"
+
+          has_many :deals, :dependent => :delete_all
+          if ActiveRecord::VERSION::MAJOR >= 4
+            has_and_belongs_to_many :contacts, lambda { order("#{Contact.table_name}.last_name, #{Contact.table_name}.first_name") }
+          else
+            has_and_belongs_to_many :contacts, :order => "#{Contact.table_name}.last_name, #{Contact.table_name}.first_name"
+          end
         end
       end
     end

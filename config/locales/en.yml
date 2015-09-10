@@ -295,6 +295,7 @@ en:
   label_crm_region: 'State'
   label_crm_postcode: 'ZIP'
   label_crm_country: Country
+  label_crm_country_code: Country code
   label_crm_countries:
     AF: Afghanistan
     AL: Albania

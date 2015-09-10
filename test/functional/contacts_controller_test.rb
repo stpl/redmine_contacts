@@ -305,6 +305,26 @@ class ContactsControllerTest < ActionController::TestCase
     assert_select 'table.note_data div.note.content.preview', /Note 2/
   end
 
+  test "should create with avatar" do
+    image = Redmine::Plugin.find(:redmine_contacts).directory + '/test/fixtures/files/image.jpg'
+    avatar = Rack::Test::UploadedFile.new(image, "image/jpeg")
+    @request.session[:user_id] = 1
+    assert_difference 'Contact.count' do
+      post :create, :project_id => 1,
+                    :contact_avatar => { :file => avatar },
+                    :contact => {:last_name => "Testov",
+                                 :middle_name => "Test",
+                                 :first_name => "Testovich"}
+
+    end
+
+    assert_redirected_to :controller => 'contacts', :action => 'show', :id => Contact.last.id, :project_id => Contact.last.project
+    assert_equal "Contact", Attachment.last.container_type
+    assert_equal Contact.last.id, Attachment.last.container_id
+
+    assert_equal "image.jpg", Attachment.last.diskfile[/image\.jpg/]
+  end
+
   private
 
   def crm_query_params

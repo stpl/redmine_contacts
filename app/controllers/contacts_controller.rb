@@ -303,7 +303,7 @@ private
       @offset = @contacts_pages.offset
       @limit =  @contacts_pages.items_per_page
 
-      @contacts = @contacts.scoped :include => [:tags, :avatar], :limit  => @limit, :offset => @offset
+      @contacts = @contacts.eager_load([:tags, :avatar]).limit(@limit).offset(@offset)
 
       fake_name = @contacts.first.name if @contacts.length > 0
     end

@@ -30,7 +30,7 @@ class RecentlyViewed < ActiveRecord::Base
 
   # after_save :increment_views_count
   def self.last(limit=RECENTLY_VIEWED_LIMIT, usr=nil)
-    RecentlyViewed.find_all_by_viewer_id(usr || User.current, :limit => limit, :order => "#{RecentlyViewed.table_name}.updated_at DESC").collect{|v| v.viewed}.select(&:visible?).compact
+    RecentlyViewed.where("#{RecentlyViewed.table_name}.viewer_id" => usr || User.current).order("#{RecentlyViewed.table_name}.updated_at DESC").limit(limit).collect{|v| v.viewed}.select(&:visible?).compact
   end
 
   private

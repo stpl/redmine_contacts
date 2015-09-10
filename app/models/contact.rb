@@ -84,15 +84,17 @@ class Contact < ActiveRecord::Base
   has_many :addresses, :dependent => :destroy, :as => :addressable, :class_name => "Address"
   belongs_to :assigned_to, :class_name => 'User', :foreign_key => 'assigned_to_id'
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
-  has_and_belongs_to_many :projects, :uniq => true
-  has_and_belongs_to_many :issues, :order => "#{Issue.table_name}.due_date", :uniq => true
 
   if ActiveRecord::VERSION::MAJOR >= 4
     has_one :avatar, lambda { where("#{Attachment.table_name}.description = 'avatar'") }, :class_name => "Attachment", :as  => :container, :dependent => :destroy
     has_one :address, lambda { where(:address_type => "business") }, :dependent => :destroy, :as => :addressable, :class_name => "Address"
+    has_and_belongs_to_many :projects, lambda { uniq }
+    has_and_belongs_to_many :issues, lambda { order("#{Issue.table_name}.due_date").uniq }
   else
     has_one :avatar, :conditions => "#{Attachment.table_name}.description = 'avatar'", :class_name => "Attachment", :as  => :container, :dependent => :destroy
     has_one :address, :conditions => {:address_type => "business"}, :dependent => :destroy, :as => :addressable, :class_name => "Address"
+    has_and_belongs_to_many :projects, :uniq => true
+    has_and_belongs_to_many :issues, :order => "#{Issue.table_name}.due_date", :uniq => true
   end
 
   attr_accessor :phones

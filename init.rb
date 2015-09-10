@@ -19,7 +19,7 @@
 
 require 'redmine'
 
-CONTACTS_VERSION_NUMBER = '4.0.1'
+CONTACTS_VERSION_NUMBER = '4.0.2'
 CONTACTS_VERSION_TYPE = "Light version"
 
 if ActiveRecord::VERSION::MAJOR >= 4
