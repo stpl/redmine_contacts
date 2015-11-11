@@ -4,6 +4,17 @@ Redmine CRM plugin - customer relationship management plugin for redmine
 Copyright (C) 2011-2015 Kirill Bezrukov
 http://www.redminecrm.com/
 
+== 2015-11-06 v4.0.3
+
+* New import UI for redmine 3.2+
+* Fixed company contacts show bug
+* Fixed notes custom field bug
+* Fixed bug with contacts queries
+* Fixed bug with bigtext in contact notes
+* Fixed custom field bug in Windows Edge
+* Fixed bug with deal watchers delete link
+* Fixed bug with contact url on contacts list view
+
 == 2015-08-24 v4.0.2
 
 * Recalculate deals amount on board view

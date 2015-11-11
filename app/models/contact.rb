@@ -151,9 +151,9 @@ class Contact < ActiveRecord::Base
 
   accepts_nested_attributes_for :address, :allow_destroy => true, :update_only => true, :reject_if => proc {|attributes| Address.reject_address(attributes)}
 
-  scope :visible, lambda {|*args| joins(:projects).where(Contact.visible_condition(args.shift || User.current, *args)) }
-  scope :deletable, lambda {|*args| joins(:projects).where(Contact.deletable_condition(args.shift || User.current, *args)).readonly(false) }
-  scope :editable, lambda {|*args| joins(:projects).where(Contact.editable_condition(args.shift || User.current, *args)).readonly(false) }
+  scope :visible, lambda {|*args| eager_load(:projects).where(Contact.visible_condition(args.shift || User.current, *args)) }
+  scope :deletable, lambda {|*args| eager_load(:projects).where(Contact.deletable_condition(args.shift || User.current, *args)).readonly(false) }
+  scope :editable, lambda {|*args| eager_load(:projects).where(Contact.editable_condition(args.shift || User.current, *args)).readonly(false) }
   scope :by_project, lambda {|prj| joins(:projects).where("#{Project.table_name}.id = ?", prj) unless prj.blank? }
   scope :like_by, lambda {|field, search| {:conditions => ["LOWER(#{Contact.table_name}.#{field}) LIKE ?", search.downcase + "%"] }}
   scope :companies, lambda { where(:is_company => true) }
@@ -161,6 +161,7 @@ class Contact < ActiveRecord::Base
   scope :order_by_name, lambda { order(Contact.fields_for_order_statement) }
   scope :order_by_creation, lambda { order("#{Contact.table_name}.created_on DESC") }
 
+  scope :by_full_name, lambda {|search| where("LOWER(CONCAT(#{Contact.table_name}.first_name,' ',#{Contact.table_name}.last_name)) = ? ", search.downcase)}
   scope :by_name, lambda {|search| where("(LOWER(#{Contact.table_name}.first_name) LIKE LOWER(:p) OR
                                                                   LOWER(#{Contact.table_name}.last_name) LIKE LOWER(:p) OR
                                                                   LOWER(#{Contact.table_name}.middle_name) LIKE LOWER(:p))",

@@ -66,7 +66,7 @@ module RedmineContacts
             scope = scope.includes(:avatar)
             scope = scope.by_project(@project) if @project
             q.split(' ').collect{ |search_string| scope = scope.where('LOWER(first_name) LIKE LOWER(?)', "#{search_string}%") } unless q.blank?
-            @companies = scope.visible.companies.order(:first_name)
+            @companies = scope.visible.companies.order("#{Contact.table_name}.first_name")
           end
           render :layout => false, :partial => 'companies'
         end

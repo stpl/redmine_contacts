@@ -19,13 +19,13 @@
 
 class Address < ActiveRecord::Base
   attr_reader :country
-  attr_accessible :street1, :street2, :region, :city, :country_code, :postcode if ActiveRecord::VERSION::MAJOR >= 4
+  attr_accessible :street1, :street2, :region, :city, :country_code, :postcode, :full_address, :address_type, :addressable if ActiveRecord::VERSION::MAJOR >= 4
 
   belongs_to :addressable, :polymorphic => true
 
-  scope :business, lambda { where(:address_type => "business") }
-  scope :billing, lambda { where(:address_type => "billing") }
-  scope :shipping, lambda { where(:address_type => "shipping") }
+  scope :business, lambda { where(:address_type => 'business') }
+  scope :billing, lambda { where(:address_type => 'billing') }
+  scope :shipping, lambda { where(:address_type => 'shipping') }
 
   before_save :populate_full_address
 

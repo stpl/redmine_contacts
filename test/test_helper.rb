@@ -21,12 +21,32 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../test/test_helper')
 
-
 def redmine_contacts_fixture_files_path
   "#{Rails.root}/plugins/redmine_contacts/test/fixtures/files/"
 end
 
 # Engines::Testing.set_fixture_path
+module RedmineContacts
+  module TestHelper
+
+    def with_contacts_settings(options, &block)
+      saved_settings = options.keys.inject({}) do |h, k|
+        h[k] = case Setting.plugin_redmine_contacts[k]
+               when Symbol, false, true, nil
+                 Setting.plugin_redmine_contacts[k]
+               else
+                 Setting.plugin_redmine_contacts[k].dup
+               end
+        h
+      end
+      options.each { |k, v| Setting.plugin_redmine_contacts[k] = v }
+      yield
+    ensure
+      saved_settings.each { |k, v| Setting.plugin_redmine_contacts[k] = v } if saved_settings
+    end
+
+  end
+end
 
 class RedmineContacts::TestCase
   include ActionDispatch::TestProcess
@@ -52,9 +72,9 @@ class RedmineContacts::TestCase
 
   def self.create_fixtures(fixtures_directory, table_names, class_names = {})
     if ActiveRecord::VERSION::MAJOR >= 4
-      ActiveRecord::FixtureSet.create_fixtures(fixtures_directory, table_names, class_names = {})
+      ActiveRecord::FixtureSet.create_fixtures(fixtures_directory, table_names, class_names)
     else
-      ActiveRecord::Fixtures.create_fixtures(fixtures_directory, table_names, class_names = {})
+      ActiveRecord::Fixtures.create_fixtures(fixtures_directory, table_names, class_names)
     end
   end
 

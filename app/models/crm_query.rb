@@ -22,7 +22,7 @@ class CrmQuery < Query
   def self.visible(*args)
     user = args.shift || User.current
     base = Project.allowed_to_condition(user, "view_#{queried_class.name.pluralize.downcase}".to_sym, *args)
-    scope = includes(:project).where("#{table_name}.project_id IS NULL OR (#{base})")
+    scope = eager_load(:project).where("#{table_name}.project_id IS NULL OR (#{base})")
 
     if user.admin?
       scope.where("#{table_name}.visibility <> ? OR #{table_name}.user_id = ?", VISIBILITY_PRIVATE, user.id)

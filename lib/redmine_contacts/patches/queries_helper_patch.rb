@@ -34,7 +34,9 @@ module RedmineContacts
 
       module InstanceMethods
         def column_value_with_contacts(column, list_object, value)
-          if column.name == :name && list_object.is_a?(Contact)
+          if column.name == :id && list_object.is_a?(Contact)
+            link_to(value, contact_path(value))
+          elsif column.name == :name && list_object.is_a?(Contact)
             contact_tag(list_object)
           elsif value.is_a?(Contact)
             contact_tag(value)

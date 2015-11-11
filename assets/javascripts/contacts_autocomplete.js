@@ -9,6 +9,7 @@ function initContactsAutocomplete(fieldName, sourceUrl, selectUrl) {
       $(spanId).show();
       $(spanId).scrollTop( 0 );
       $(fieldId).hide();
+      $(fieldId).val( contact.id );
       $(linkId).show();
       $(fieldId + '_add_link').hide();
     } else {

@@ -32,7 +32,14 @@ module RedmineContacts
           priceable_options.each do |priceable_attr|
             priceable_methods << %(
               def #{priceable_attr.to_s}_to_s
-                object_price(self, :#{priceable_attr}) if self.respond_to?(:#{priceable_attr})
+                object_price(
+                  self, 
+                  :#{priceable_attr},
+                  { 
+                    :decimal_mark => ContactsSetting.decimal_separator,
+                    :thousands_separator => ContactsSetting.thousands_delimiter
+                  }
+                ) if self.respond_to?(:#{priceable_attr})
               end
             )
           end

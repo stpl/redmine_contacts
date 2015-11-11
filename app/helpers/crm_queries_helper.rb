@@ -61,7 +61,7 @@ module CrmQueriesHelper
 
   def sidebar_crm_queries(query_class)
     unless @sidebar_queries
-      @sidebar_queries = query_class.joins(:project).visible.
+      @sidebar_queries = query_class.visible.
         where(@project.nil? ? ["project_id IS NULL"] : ["project_id IS NULL OR project_id = ?", @project.id]).
         order("#{query_class.table_name}.name ASC")
     end

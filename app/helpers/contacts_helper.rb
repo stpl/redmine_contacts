@@ -140,5 +140,20 @@ module ContactsHelper
     end
   end
 
+  def importer_link
+    project_contact_imports_path
+  end
+
+  def importer_show_link(importer, project)
+    project_contact_import_path(:id => importer, :project_id => project)
+  end
+
+  def importer_settings_link(importer, project)
+    settings_project_contact_import_path(:id => importer, :project => project)
+  end
+
+  def importer_run_link(importer, project)
+    run_project_contact_import_path(:id => importer, :project_id => project, :format => 'js')
+  end
 
 end

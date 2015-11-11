@@ -154,6 +154,17 @@ class ContactsControllerTest < ActionController::TestCase
     assert_select 'div#comments div#notes table.note_data td.name h4', 4
     assert_select 'h3', "Recently viewed"
   end
+
+  def test_get_show_with_bigtext_note
+    Contact.find(3).notes.create(:content => many_text, :author_id => 1)
+    @request.session[:user_id] = 2
+    Setting.default_language = 'en'
+
+    get :show, :id => 3, :project_id => 1
+    assert_response :success
+    assert_template :show
+    assert_select '.note a', '(read more)'
+  end
   test "should get new" do
     @request.session[:user_id] = 2
     get :new, :project_id => 1
@@ -329,5 +340,20 @@ class ContactsControllerTest < ActionController::TestCase
 
   def crm_query_params
     {:set_filter => "1", :project_id => "ecookbook"}
+  end
+
+  def many_text
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+     In justo urna, faucibus eu fringilla in, lobortis in libero.
+     Donec nec eros a dui fermentum aliquam quis sit amet mauris. Fusce ac rutrum erat.
+     Sed porta tristique leo eget placerat. Aenean vitae viverra odio, at congue ante.
+     Integer purus est, tempus eu neque vitae, facilisis faucibus massa. Maecenas pretium auctor commodo.
+     Ut condimentum euismod arcu vel fringilla.
+     Interdum et malesuada fames ac ante ipsum primis in faucibus. Mauris id volutpat lorem.
+     Mauris sed ipsum ut tortor semper pellentesque non eleifend eros.
+     Ut eget est ac dui rhoncus hendrerit vitae eu urna. Phasellus ut convallis tortor, et aliquam odio.
+     Proin nec tortor porttitor justo malesuada interdum sit amet ac eros. Vivamus vel bibendum ipsum, ut tincidunt sem.
+     Pellentesque imperdiet ligula id nunc finibus posuere. Proin eu urna fringilla, vestibulum erat dictum, pharetra nisi.
+     Nulla gravida sapien metus, nec dignissim lectus scelerisque vitae. Nam quis congue nulla.'
   end
 end

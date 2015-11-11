@@ -120,8 +120,19 @@ class AddressTest < ActiveSupport::TestCase
     address.country_code = "US"
 
     assert_equal "Seattle\nWA\nUnited States", address.post_address
-
   end
 
+  def test_should_create_new_address
+    address = Address.new
+    address.street1 = 'ул. Новая Басманная, 14'
+    address.city = 'г. Москва'
+    address.postcode = '145013'
+    address.country_code = 'RU'
+    address.address_type = 'business'
+    address.addressable = Contact.first
+    address.save!
 
+    assert_equal false, address.new_record?
+    assert_equal 'ул. Новая Басманная, 14, г. Москва, 145013, Russia', address.full_address
+  end
 end

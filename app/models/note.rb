@@ -20,7 +20,7 @@
 class Note < ActiveRecord::Base
   unloadable
 
-  attr_accessible :subject, :type_id, :note_time, :content, :created_on
+  attr_accessible :subject, :type_id, :author_id, :note_time, :content, :created_on, :custom_field_values
 
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
   belongs_to :source, :polymorphic => true, :touch => true

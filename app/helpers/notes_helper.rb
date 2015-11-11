@@ -80,13 +80,21 @@ module NotesHelper
   end
 
   def note_content(note)
-    s = ""
+    s = ''
     if note.content.length > Note.cut_length
-      s << textilizable(truncate(note.content, {:length => Note.cut_length, :omission => "... \"#{l(:label_crm_note_read_more)}\":#{url_for(:controller => 'notes', :action => 'show', :project_id => @project, :id => note)}" }))
+      if ActiveRecord::VERSION::MAJOR >= 4
+        s << truncate(note.content, :length => Note.cut_length) { link_to "#{l(:label_crm_note_read_more)}", note_path(:id => note, :project_id => @project) }
+      else
+        s << textilizable(truncate(note.content, :length => Note.cut_length,
+                                                 :omission => "... \"#{l(:label_crm_note_read_more)}\":#{url_for(:controller => 'notes',
+                                                                                                                 :action => 'show',
+                                                                                                                 :project_id => @project,
+                                                                                                                 :id => note)}"))
+      end
     else
-		  s << textilizable(note, :content)
-		end
-		s.html_safe
+      s << textilizable(note, :content)
+    end
+    s.html_safe
   end
 
   def notes_to_csv(notes)
