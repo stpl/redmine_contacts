@@ -336,6 +336,15 @@ class ContactsControllerTest < ActionController::TestCase
     assert_equal "image.jpg", Attachment.last.diskfile[/image\.jpg/]
   end
 
+  def test_last_notes_for_contact
+    contact = Contact.find(1)
+    note = contact.notes.create(:content => "note for contact", :author_id => 1)
+    @request.session[:user_id] = 1
+    get :index
+    assert_response :success
+    assert_select '.note.content', :text => note.content
+  end
+
   private
 
   def crm_query_params

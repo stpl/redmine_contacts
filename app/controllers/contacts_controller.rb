@@ -251,11 +251,11 @@ private
   def last_notes(count=5)
     scope = ContactNote.where({})
     scope = scope.where("#{Project.table_name}.id = ?", @project.id) if @project
-    scope = scope.joins(:attachments)
+    scope = scope.includes(:attachments)
 
     @last_notes = scope.visible.
       limit(count).
-      order("#{ContactNote.table_name}.created_on DESC")
+      order("#{ContactNote.table_name}.created_on DESC").uniq
   end
 
   def find_contact

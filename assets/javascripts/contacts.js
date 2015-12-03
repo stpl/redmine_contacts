@@ -170,3 +170,15 @@ function submit_query_form(id) {
   selectAllOptions("selected_columns");
   $('#'+id).submit();
 }
+
+//replaces redmine default method showTab() beacuse of compatibility Redmine 3.1+
+function showContactTab(name, url) {
+  $('div#content .tab-content').hide();
+  $('div.tabs a').removeClass('selected');
+  $('#tab-content-' + name).show();
+  $('#tab-' + name).addClass('selected');
+  if ("replaceState" in window.history) {
+    window.history.replaceState(null, document.title, url);
+  }
+  return false;
+}

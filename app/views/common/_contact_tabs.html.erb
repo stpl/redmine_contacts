@@ -7,7 +7,7 @@
                         :id => "tab-#{tab[:name]}",
                         :class => (tab[:name] != selected_tab ? 'tab-header' : 'selected tab-header'),
                         :data => { :name => tab[:name], :partial => tab[:partial], :project_id => @project},
-                        :onclick => "showTab('#{tab[:name]}'); this.blur(); return false;" %></li>
+                        :onclick => "showContactTab('#{tab[:name]}'); this.blur(); return false;" %></li>
     <% end -%>
   </ul>
   <div class="tabs-buttons" style="display:none;">

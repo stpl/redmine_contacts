@@ -28,23 +28,13 @@ end
 # Engines::Testing.set_fixture_path
 module RedmineContacts
   module TestHelper
-
     def with_contacts_settings(options, &block)
-      saved_settings = options.keys.inject({}) do |h, k|
-        h[k] = case Setting.plugin_redmine_contacts[k]
-               when Symbol, false, true, nil
-                 Setting.plugin_redmine_contacts[k]
-               else
-                 Setting.plugin_redmine_contacts[k].dup
-               end
-        h
-      end
-      options.each { |k, v| Setting.plugin_redmine_contacts[k] = v }
+      Setting.plugin_redmine_contacts.stubs(:[]).returns(nil)
+      options.each { |k, v| Setting.plugin_redmine_contacts.stubs(:[]).with(k).returns(v) }
       yield
     ensure
-      saved_settings.each { |k, v| Setting.plugin_redmine_contacts[k] = v } if saved_settings
+      options.each { |k, v| Setting.plugin_redmine_contacts.unstub(:[]) }
     end
-
   end
 end
 
@@ -112,6 +102,7 @@ class RedmineContacts::TestCase
 
     Role.where(:id => 2).each do |r|
       r.permissions << :edit_deals
+      r.permissions << :manage_contact_issue_relations
       r.save
     end
 

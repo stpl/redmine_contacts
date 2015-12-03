@@ -17,11 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with redmine_contacts.  If not, see <http://www.gnu.org/licenses/>.
 
-requires_redmine_crm :version_or_higher => '0.0.19' rescue raise "\n\033[31mRedmine requires newer redmine_crm gem version.\nPlease update with 'bundle update redmine_crm'.\033[0m"
+requires_redmine_crm :version_or_higher => '0.0.21' rescue raise "\n\033[31mRedmine requires newer redmine_crm gem version.\nPlease update with 'bundle update redmine_crm'.\033[0m"
 
 require 'redmine'
 
-CONTACTS_VERSION_NUMBER = '4.0.3'
+CONTACTS_VERSION_NUMBER = '4.0.4'
 CONTACTS_VERSION_TYPE = "Light version"
 
 if ActiveRecord::VERSION::MAJOR >= 4

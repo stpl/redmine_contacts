@@ -4,6 +4,12 @@ Redmine CRM plugin - customer relationship management plugin for redmine
 Copyright (C) 2011-2015 Kirill Bezrukov
 http://www.redminecrm.com/
 
+== 2015-12-02 v4.0.4
+
+* Fixed major currencies bug
+* Fixed bug with deals statistics
+* Fixed bug with last notes duplication
+
 == 2015-11-06 v4.0.3
 
 * New import UI for redmine 3.2+

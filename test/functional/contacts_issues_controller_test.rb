@@ -98,7 +98,7 @@ class ContactsIssuesControllerTest < ActionController::TestCase
 
   def test_autocomplete_for_contact
     @request.session[:user_id] = 1
-    xhr :get, :autocomplete_for_contact, :q => 'domo', :issue_id => '1' , :project_id => 'ecookbook', :cross_project_contacts => "1"
+    xhr :get, :autocomplete_for_contact, :q => 'domo', :issue_id => '1', :project_id => 'ecookbook', :cross_project_contacts => '1'
     assert_response :success
     assert_select 'input', :count => 1
     if ActiveRecord::VERSION::MAJOR >= 4
@@ -106,6 +106,22 @@ class ContactsIssuesControllerTest < ActionController::TestCase
     else
       assert_select 'input[name=?][value=3]', 'contacts_issue[contact_ids][]'
     end
+  end
+
+  def test_autocomplete_for_contact_cross_contacts
+    @request.session[:user_id] = 2
+
+    xhr :get, :autocomplete_for_contact, :q => 'a', :issue_id => '4', :project_id => 'onlinestore', :cross_project_contacts => '0'
+    assert_response :success
+    assert_select 'span.contact', :count => 1
+    assert_select 'span.contact', /Ivan Ivanov/
+
+    xhr :get, :autocomplete_for_contact, :q => 'a', :issue_id => '4', :project_id => 'onlinestore', :cross_project_contacts => '1'
+    assert_response :success
+    assert_select 'span.contact', :count => 3
+    assert_select 'span.contact', /Domoway/
+    assert_select 'span.contact', /Ivan Ivanov/
+    assert_select 'span.contact', /Marat Aminov/
   end
 
   def test_new
