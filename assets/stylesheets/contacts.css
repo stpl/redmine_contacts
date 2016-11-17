@@ -691,6 +691,7 @@ table.contact.attributes .gravatar {
 
 table.sidebar.attributes td, table.sidebar.attributes th {
   padding: inherit;
+  text-align: left;
 }
 
 .tab-placeholder {
@@ -700,3 +701,18 @@ table.sidebar.attributes td, table.sidebar.attributes th {
 .tab-placeholder.active {
     display: block !important;
 }
+
+ul.ui-autocomplete {
+  z-index: 10100;
+}
+
+div.ui-dialog  {
+  z-index: 999 !important;
+}
+
+#issue_contacts ul {margin: 0;  padding: 0;}
+#issue_contacts li {list-style-type:none; margin: 0px 2px 0px 0px; padding: 0px 0px 0px 0px;}
+#issue_contacts select {width: 95%; display: block;}
+#issue_contacts a.delete {opacity: 0.4;}
+#issue_contacts a.delete:hover {opacity: 1;}
+#issue_contacts img.gravatar {vertical-align: middle; margin: 0 4px 2px 0;}

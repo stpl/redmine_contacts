@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2015 Kirill Bezrukov
+# Copyright (C) 2011-2016 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -118,10 +118,11 @@ class ContactsIssuesControllerTest < ActionController::TestCase
 
     xhr :get, :autocomplete_for_contact, :q => 'a', :issue_id => '4', :project_id => 'onlinestore', :cross_project_contacts => '1'
     assert_response :success
-    assert_select 'span.contact', :count => 3
+    assert_select 'span.contact', :count => 4
     assert_select 'span.contact', /Domoway/
     assert_select 'span.contact', /Ivan Ivanov/
     assert_select 'span.contact', /Marat Aminov/
+    assert_select 'span.contact', /My company/
   end
 
   def test_new

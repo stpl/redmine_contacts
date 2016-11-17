@@ -17,7 +17,7 @@
 <div id="comments">
 	<div id="notes">
 		<%= render :partial => 'notes/note_item', :collection => @notes, :locals => {:show_info => @contact.is_company, :note_source => @contact} %>
-		<p class="pagination"> <%= pagination_links_full @notes_pages %>  </p>
+		<span class="pagination"> <%= pagination_links_full @notes_pages %>  </span>
 	</div>
 </div>
 

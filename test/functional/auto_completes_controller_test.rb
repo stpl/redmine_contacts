@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2015 Kirill Bezrukov
+# Copyright (C) 2011-2016 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -71,6 +71,13 @@ class AutoCompletesControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil assigns(:companies)
     assert assigns(:companies).detect {|contact| contact.name.match /Domoway/}
+  end
+
+  def test_companies_witth_spaces_should_be_found
+    get :companies, :project_id => 'ecookbook', :q => 'my c'
+    assert_response :success
+    assert_not_nil assigns(:companies)
+    assert assigns(:companies).detect {|contact| contact.name.match /My company/}
   end
 
   def test_contacts_should_return_json

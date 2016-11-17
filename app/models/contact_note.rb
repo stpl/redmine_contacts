@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2015 Kirill Bezrukov
+# Copyright (C) 2011-2016 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ class ContactNote < Note
       acts_as_activity_provider :type => 'contacts',
                                 :permission => :view_contacts,
                                 :author_key => :author_id,
-                                :scope => joins(:contact => :projects).where(:source_type => 'Contact')
+                                :scope => eager_load(:contact => :projects).where(:source_type => 'Contact')
     end
   else
     acts_as_activity_provider :type => 'contacts',

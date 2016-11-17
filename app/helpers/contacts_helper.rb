@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2015 Kirill Bezrukov
+# Copyright (C) 2011-2016 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -154,6 +154,18 @@ module ContactsHelper
 
   def importer_run_link(importer, project)
     run_project_contact_import_path(:id => importer, :project_id => project, :format => 'js')
+  end
+
+  def importer_link_to_object(contact)
+    link_to "#{contact.first_name} #{contact.last_name}", contact_path(contact)
+  end
+
+  def _project_contacts_path(project, *args)
+    if project
+      project_contacts_path(project, *args)
+    else
+      contacts_path(*args)
+    end
   end
 
 end

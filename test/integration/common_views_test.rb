@@ -3,7 +3,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2015 Kirill Bezrukov
+# Copyright (C) 2011-2016 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ require File.expand_path('../../test_helper', __FILE__)
 require File.expand_path(File.dirname(__FILE__) + '/../../../../test/test_helper')
 
 
-class CommonViewsTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmine::ApiTest::Base : ActionController::IntegrationTest
+class RedmineContacts::CommonViewsTest < ActiveRecord::VERSION::MAJOR >= 4 ? Redmine::ApiTest::Base : ActionController::IntegrationTest
   fixtures :projects,
            :users,
            :roles,

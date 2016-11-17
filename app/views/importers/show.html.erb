@@ -5,12 +5,7 @@
 
   <ol>
   <% @import.saved_objects.each do |imported_object| %>
-    <% if imported_object.is_a?(Contact) %>
-      <li><%= link_to_contact imported_object %></li>
-    <% end %>
-    <% if imported_object.is_a?(Deal) %>
-      <li><%= link_to_deal imported_object %></li>
-    <% end %>
+    <li><%= importer_link_to_object imported_object %></li>
   <% end %>
   </ul>
 <% else %>

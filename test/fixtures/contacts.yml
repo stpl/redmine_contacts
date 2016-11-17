@@ -36,3 +36,12 @@ contact_four:
     email: "jsmith@somenet.foo"
     background: "Contact with user realation\nUser id = 2"
     website: domoway.ru
+
+contact_five:
+    id: 5
+    first_name: 'My company'
+    job_title: web project
+    is_company: true
+    email: "company@mail.ru"
+    background: Realy cool project
+    website: company.ru

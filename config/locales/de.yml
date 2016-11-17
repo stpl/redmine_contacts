@@ -5,6 +5,7 @@ de:
   label_crm_recently_viewed: Kürzlich angesehen
   label_crm_gravatar_enabled: Gravatar benutzen
   label_crm_thumbnails_enabled: Bildvorschau in Anmerkungen anzeigen
+  label_crm_max_thumbnail_file_size: Max. Größe der Bildvorschau
   label_crm_view_all_contacts: Alle Kontakte anzeigen
   label_crm_background_info: Hintergrundinformationen
   label_crm_company: Unternehmen
@@ -17,6 +18,9 @@ de:
   label_crm_at_company: bei
   label_crm_last_notes: Letzte Anmerkungen
   label_crm_tags_plural: Tags
+  label_crm_multi_tags_plural: Mehrere Tags auswählen
+  label_crm_single_tag_mode: Einzelner Tag
+  label_crm_multiple_tags_mode: Mehrere Tags
   label_crm_contact_tag: Tag
   label_crm_time_ago: her
   label_crm_add_note_plural: Anmerkung hinzufügen
@@ -91,6 +95,7 @@ de:
   field_birthday: Geburtstag
   field_contact_department: Abteilung
 
+
   field_company_field: Industrie
 
   field_color: Farbe
@@ -155,7 +160,6 @@ de:
   #2.0.3
   label_crm_add_contact: Add contact
   label_contact: Kontakt
-  label_import: Import
   field_age: Alter
   label_crm_vcf_import: Import von vCard
   label_crm_mail_from: Von
@@ -188,20 +192,18 @@ de:
 
   #2.3.0
   label_crm_module_plural: Module
-  label_crm_contacts_default_currency: Standard Währung für Verfaufschange
-  label_crm_contacts_list_partial_style: Kontakt-Listenansicht
-  label_crm_contacts_list_excerpt: Einspalte Liste
-  label_crm_contacts_list_cards: Karten
-  label_crm_contacts_list_list: Tabelle
+  label_crm_list_partial_style: Kontakt-Listenansicht
+  label_crm_list_excerpt: Einspalte Liste
+  label_crm_list_cards: Karten
+  label_crm_list_list: Tabelle
   field_contacts: Kontakt
   field_companies: Unternehmen
-  label_crm_contacts_added_time_by: Hinzugefügt von
   label_crm_contact_note_authoring_time: Zeige Anmerkung mit Uhrzeit
   label_crm_contact_issues_filters: Ticketfilter
-  label_crm_contacts_csv_import: Kontakte von CSV importieren
-  label_crm_contacts_upload_encoding: Datei Encoding
-  label_crm_contacts_csv_file: CSV Datei
-  label_crm_contacts_csv_separator: Separator
+  label_crm_csv_import: Kontakte von CSV importieren
+  label_crm_upload_encoding: Datei Encoding
+  label_crm_csv_file: CSV Datei
+  label_crm_csv_separator: Separator
   field_middle_name: Zwischenname
   field_job_title: Berufsbezeichnung
   field_company: Unternehmen

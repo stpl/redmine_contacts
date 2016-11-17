@@ -1,8 +1,23 @@
 == Redmine CRM plugin changelog
 
 Redmine CRM plugin - customer relationship management plugin for redmine
-Copyright (C) 2011-2015 Kirill Bezrukov
+Copyright (C) 2010-2016 Kirill Bezrukov
 http://www.redminecrm.com/
+
+== 2016-11-17 v4.0.5
+
+* "+" button support
+* German translation update (Marcel Müller)
+* New pagination styles
+* IDs filters for contacts and deals
+* User activity duplication bug fixed
+* Sales funnel bug fixed
+* Fixed bug with select all contacts
+* Fixed russian "б" in tags field
+* Fixed enconding bug in vCard export
+* Fixed bug with deal amount delimiter
+* Fixed bug with sending attaches via email
+* Import views compatibility fixes
 
 == 2015-12-02 v4.0.4
 

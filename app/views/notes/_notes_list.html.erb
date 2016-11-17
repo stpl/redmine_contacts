@@ -2,7 +2,7 @@
 	<% @notes.each do |note| %>
 		<%= render :partial => 'notes/note_data', :locals => {:limit => 1000}, :object => note %>
 	<% end %>
-	<p class="pagination"> <%= pagination_links_full @notes_pages %>  </p>
+	<span class="pagination"> <%= pagination_links_full @notes_pages %>  </span>
 <% else %>
   <p class="nodata"><%=l(:label_no_data)%></p>
 <% end %>

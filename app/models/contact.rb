@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2015 Kirill Bezrukov
+# Copyright (C) 2011-2016 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -328,7 +328,7 @@ class Contact < ActiveRecord::Base
 
   def send_mail_allowed?(usr=nil)
     usr ||= User.current
-    @send_mail_allowed ||= 0 < self.projects.visible(usr).count(:conditions => Project.allowed_to_condition(usr, :send_contacts_mail))
+    @send_mail_allowed ||= 0 < self.projects.visible(usr).where(Project.allowed_to_condition(usr, :send_contacts_mail)).count
   end
 
   def self.projects_joins

@@ -103,7 +103,7 @@ ru:
 
   button_add_note: Добавить заметку
   notice_successful_save: Сохранение успешно завершено
-  notice_successful_add: Создание успешнео завершено
+  notice_successful_add: Создание успешно завершено
   notice_unsuccessful_save: Невозможно сохранить
   notice_successful_merged: Объединение успешно завершено
 
@@ -589,6 +589,6 @@ ru:
   label_crm_pipeline: Воронка продаж
   text_crm_no_deal_statuses_in_project: В проекте нет активных статусов для сделок
   label_crm_light_free_version: CRM бесплатная версия
-  label_crm_link_to_pro: Обновление до PRO 
+  label_crm_link_to_pro: Обновление до PRO
   label_crm_link_to_pro_demo: Онлайн демо PRO
   label_crm_link_to_more_plugins: Другие плагины RedmineCRM

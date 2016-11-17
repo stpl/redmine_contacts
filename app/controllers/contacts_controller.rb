@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2015 Kirill Bezrukov
+# Copyright (C) 2011-2016 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -57,7 +57,6 @@ class ContactsController < ApplicationController
     sort_init(@query.sort_criteria.empty? ? [['last_name', 'asc'], ['first_name', 'asc']] : @query.sort_criteria)
     sort_update(@query.sortable_columns)
     @query.sort_criteria = sort_criteria.to_a
-
     if @query.valid?
       case params[:format]
       when 'csv', 'pdf', 'xls', 'vcf'
@@ -81,7 +80,6 @@ class ContactsController < ApplicationController
         :offset =>  @offset
       )
       @filter_tags = @query.filters["tags"] && @query.filters["tags"][:values]
-
       respond_to do |format|
         format.html do
           unless request.xhr?
@@ -350,5 +348,4 @@ private
       render :action => 'show', :status => :created, :location => contact_url(@contact)
     end
   end
-
 end

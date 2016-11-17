@@ -1,7 +1,7 @@
 # This file is a part of Redmine CRM (redmine_contacts) plugin,
 # customer relationship management plugin for Redmine
 #
-# Copyright (C) 2011-2015 Kirill Bezrukov
+# Copyright (C) 2011-2016 Kirill Bezrukov
 # http://www.redminecrm.com/
 #
 # redmine_contacts is free software: you can redistribute it and/or modify
@@ -122,6 +122,42 @@ class CrmQuery < Query
   def sql_for_contact_city_field(field, operator, value)
      sql_for_field(field, operator, value, Address.table_name, "city")
   end
+
+  def sql_for_ids_field(field, operator, value)
+    if operator == "*"
+      "1=1"
+    elsif operator == "="
+      ids = value.first.to_s.scan(/\d+/).map(&:to_i).join(",")
+      if ids.present?
+        "#{self.queried_class.table_name}.id IN (#{ids})"
+      else
+        "1=0"
+      end
+    elsif operator == ">="
+      id = value.first.to_s.scan(/\d+/).map(&:to_i).first
+      if id.present?
+        "#{self.queried_class.table_name}.id >= (#{id})"
+      else
+        "1=0"
+      end
+    elsif operator == "<="
+      id = value.first.to_s.scan(/\d+/).map(&:to_i).first
+      if id.present?
+        "#{self.queried_class.table_name}.id <= (#{id})"
+      else
+        "1=0"
+      end
+    elsif operator == "><"
+      if value.is_a? Array
+        "#{self.queried_class.table_name}.id BETWEEN #{value.first} AND #{value.last}"
+      else
+        "1=0"
+      end
+    else
+      "1=0"
+    end
+  end if Redmine::VERSION.to_s >= '3.3'
+
 
   def principals
     return @principals if @principals
