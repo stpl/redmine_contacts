@@ -20,6 +20,11 @@
 
      <li><%= context_menu_link l(:button_delete), {:controller => 'contacts', :action => 'bulk_destroy', :ids => @contacts.collect(&:id), :project_id => @project},
                             :method => :delete, :confirm => l(:text_are_you_sure), :class => 'icon-del', :disabled => !@can[:delete] %></li>
+
+    <li><%= context_menu_link "Activate", {:controller => 'contacts', :action => 'bulk_activate', :ids => @contacts.collect(&:id), :project_id => @project}, :method => :post, :confirm => l(:text_are_you_sure), :class => 'icon-ok' %></li>
+
+    <li><%= context_menu_link "Deactivate", {:controller => 'contacts', :action => 'bulk_deactivate', :ids => @contacts.collect(&:id), :project_id => @project}, :method => :post, :confirm => l(:text_are_you_sure), :class => 'icon-not-ok' %></li>
+
     <% if !@contact && Redmine::VERSION.to_s >= '3.3' %>
       <li>
         <%= context_menu_link l(:button_filter), _project_contacts_path(@project, :set_filter => 1, :ids => @contacts.map(&:id).join(',')),

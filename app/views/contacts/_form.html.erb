@@ -77,6 +77,8 @@
 
 	<p class="extended"><%= f.select :visibility, collection_for_visibility_select, :include_blank => false, :label => l(:label_crm_contacts_visibility) %></p>
 
+	<p class="extended"><%= f.check_box(:is_active, :label => "Active") %></p>
+
 	<p id="show_details_link" style="display: none;"><%= link_to l(:label_crm_show_details), "#", :onclick => "$('#contact_data .extended').show();" %></p>
 
 </div>

@@ -11,7 +11,7 @@
     <script type="text/javascript">
        jQuery(function($) {
           // when the #search field changes
-          $("#search").observe_field(2, function() {
+          $(".search-field-filter").observe_field(2, function() {
             var form = $("#query_form"); // grab the form wrapping the search bar.
             var url = form.attr("action");
             form.find('[name="c[]"] option').each(function(i, elem){
@@ -34,13 +34,18 @@
         </span>
 
         <span class="live_search">
-            <%= text_field_tag(:search, params[:search], :autocomplete => "off", :class => "live_search_field", :placeholder => l(:label_crm_contact_search) ) %>
+            <%= text_field_tag(:search, params[:search], :autocomplete => "off", :class => "live_search_field search-field-filter", :placeholder => l(:label_crm_contact_search) ) %>
 
         </span>
 
         <span class="tags">
             <%= tag_links(@filter_tags) %>
         </span>
+
+        <div class="filters">
+            Is Active: 
+            <%= select_tag "activation", options_for_select([["All", "all"], ["Activated", "activated"], ["Deactivated", "deactivated"]]), class: "search-field-filter" %>
+        </div>
 
     </h2>
 

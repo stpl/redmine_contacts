@@ -25,11 +25,12 @@ class ContactsController < ApplicationController
 
   default_search_scope :contacts
 
-  before_filter :find_contact, :only => [:show, :edit, :update, :destroy, :load_tab]
-  before_filter :find_project, :only => [:new, :create]
+  before_filter :find_contact, :only => [:show, :edit, :update, :destroy, :load_tab, :activate, :deactivate]
+  before_filter :find_project, :only => [:new, :create, :activate, :deactivate, :bulk_activate, :bulk_deactivate]
   before_filter :authorize, :only => [:create, :new]
   before_filter :authorize_contacts, :only => [:edit, :update, :destroy]
   before_filter :find_optional_project, :only => [:index, :contacts_notes, :edit_mails, :send_mails, :bulk_update]
+  before_filter :load_contacts, only: [:bulk_activate, :bulk_deactivate]
 
   accept_rss_auth :index, :show
   accept_api_auth :index, :show, :create, :update, :destroy
@@ -77,7 +78,8 @@ class ContactsController < ApplicationController
         :search => params[:search],
         :order => sort_clause,
         :limit  =>  @limit,
-        :offset =>  @offset
+        :offset =>  @offset,
+        :conditions => (params[:activation].present? && params[:activation] != "all" ? {is_active: params[:activation] == "activated"} : "")
       )
       @filter_tags = @query.filters["tags"] && @query.filters["tags"][:values]
       respond_to do |format|
@@ -229,6 +231,26 @@ class ContactsController < ApplicationController
 
   end
 
+  def activate
+    @contact.activate! if !@contact.is_active?
+    redirect_to project_contact_path(@project, @contact), notice: "Contact activated successfully."
+  end
+
+  def deactivate
+    @contact.deactivate! if @contact.is_active?
+    redirect_to project_contact_path(@project, @contact), notice: "Contact deactivated successfully."
+  end
+
+  def bulk_activate
+    @contacts.each(&:activate!)
+    redirect_to project_contacts_path(@project), notice: "Contacts activated successfully."
+  end
+
+  def bulk_deactivate
+    @contacts.each(&:deactivate!)
+    redirect_to project_contacts_path(@project), notice: "Contacts deactivated successfully."
+  end
+
 private
   def find_contact_issues
     scope = @contact.issues
@@ -347,5 +369,10 @@ private
     else
       render :action => 'show', :status => :created, :location => contact_url(@contact)
     end
+  end
+
+  def load_contacts
+    @contacts = Contact.where(id: params[:ids])
+    raise ActiveRecord::RecordNotFound if @contacts.empty?
   end
 end

@@ -63,6 +63,7 @@ module RedmineContacts
       scope = scope.companies if options.delete(:is_company)
       scope = scope.joins(:projects).uniq.where(Contact.visible_condition(User.current))
       scope = scope.by_project(project) if project
+      scope = scope.activated if Contact.respond_to?(:activated)
       scope.to_a.sort!{|x, y| x.name <=> y.name }.collect {|m| [m.name, m.id.to_s]}
     end
 

@@ -168,4 +168,11 @@ module ContactsHelper
     end
   end
 
+  def activation_link contact, project
+    if contact.is_active?
+      link_to "Deactivate", deactivate_project_contact_path(project, contact), method: :post, confirm: l(:text_are_you_sure), class: "icon icon-not-ok"
+    else
+      link_to "Activate", activate_project_contact_path(project, contact), method: :post, confirm: l(:text_are_you_sure), class: "icon icon-ok"
+    end
+  end
 end

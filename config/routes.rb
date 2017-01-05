@@ -35,6 +35,13 @@
     resources :contacts, :path_names => {:contacts_notes => 'notes'} do
       collection do
         get :contacts_notes
+        post :bulk_activate
+        post :bulk_deactivate
+      end
+
+      member do
+        post :activate
+        post :deactivate
       end
     end
 

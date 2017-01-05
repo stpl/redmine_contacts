@@ -152,6 +152,7 @@ class Contact < ActiveRecord::Base
   accepts_nested_attributes_for :address, :allow_destroy => true, :update_only => true, :reject_if => proc {|attributes| Address.reject_address(attributes)}
 
   scope :visible, lambda {|*args| eager_load(:projects).where(Contact.visible_condition(args.shift || User.current, *args)) }
+  scope :activated, lambda { where("contacts.is_active = ?", true) }
   scope :deletable, lambda {|*args| eager_load(:projects).where(Contact.deletable_condition(args.shift || User.current, *args)).readonly(false) }
   scope :editable, lambda {|*args| eager_load(:projects).where(Contact.editable_condition(args.shift || User.current, *args)).readonly(false) }
   scope :by_project, lambda {|prj| joins(:projects).where("#{Project.table_name}.id = ?", prj) unless prj.blank? }
@@ -200,7 +201,8 @@ class Contact < ActiveRecord::Base
     'tag_list',
     'visibility',
     'watcher_user_ids',
-    'address_attributes'
+    'address_attributes',
+    'is_active'
 
 
   def self.visible_condition(user, options={})
@@ -458,6 +460,14 @@ class Contact < ActiveRecord::Base
       notified += contact_company.watcher_recipients
     end
     notified
+  end
+
+  def activate!
+    self.update_attribute :is_active, true
+  end
+
+  def deactivate!
+    self.update_attribute :is_active, false
   end
 
   private
