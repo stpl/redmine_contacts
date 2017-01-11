@@ -106,6 +106,14 @@ class CrmQuery < Query
     )
   end
 
+  def initialize_contact_is_active_filter(position=nil)
+    if Contact.respond_to? :activated
+      add_available_filter("contact_is_active", :order => position,
+        :type => :list, :values => [[l(:general_text_yes), '1'], [l(:general_text_no), '0']], :label => :label_crm_contact_is_active
+      )
+    end
+  end
+
   def sql_for_contact_country_field(field, operator, value)
     if operator == '*' # Any group
       contact_countries = l(:label_crm_countries).map{|k, v| k.to_s}
@@ -121,6 +129,10 @@ class CrmQuery < Query
 
   def sql_for_contact_city_field(field, operator, value)
      sql_for_field(field, operator, value, Address.table_name, "city")
+  end
+
+  def sql_for_contact_is_active_field(field, operator, value)
+    sql_for_field(field, operator, value, "contacts", "is_active")
   end
 
   def sql_for_ids_field(field, operator, value)

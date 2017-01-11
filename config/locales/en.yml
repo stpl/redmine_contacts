@@ -615,3 +615,6 @@ en:
   label_crm_link_to_pro: Upgrade to PRO
   label_crm_link_to_pro_demo: PRO version live demo
   label_crm_link_to_more_plugins: Find more RedmineCRM plugins
+
+  #4.2-stable
+  label_crm_contact_is_active: "Contact's is active"
